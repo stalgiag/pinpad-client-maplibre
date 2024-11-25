@@ -154,12 +154,17 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				2AEB1AB77F20127722CE0E43 /* [CP] Embed Pods Frameworks */,
+				2BF9C2FB7034496898648302 /* Remove signature files (Xcode workaround) */,
+				3C6F3723B62A4BF984F60BDE /* Remove signature files (Xcode workaround) */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = pinpadclientmaplibre;
+			packageProductDependencies = (
+				CD0E3B672476D4F262A71E61 /* MapLibre */,
+			);
 			productName = pinpadclientmaplibre;
 			productReference = 13B07F961A680F5B00A75B9A /* pinpadclientmaplibre.app */;
 			productType = "com.apple.product-type.application";
@@ -186,6 +191,9 @@
 				Base,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
+			packageReferences = (
+				BD02CDEA0F693183E2DA75E1 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
+			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -264,6 +272,34 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		2BF9C2FB7034496898648302 /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove signature files (Xcode workaround)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
+		};
+		3C6F3723B62A4BF984F60BDE /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove signature files (Xcode workaround)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
 		};
 		70626B15E9A38BCF33D56E6E /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -376,6 +412,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pinpadclientmaplibre/pinpadclientmaplibre.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = pinpadclientmaplibre/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -535,6 +572,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BD02CDEA0F693183E2DA75E1 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
+			requirement = {
+				kind = exactVersion;
+				version = 6.5.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CD0E3B672476D4F262A71E61 /* MapLibre */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD02CDEA0F693183E2DA75E1 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }

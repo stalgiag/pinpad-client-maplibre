@@ -3,21 +3,16 @@
   "sources": {
     "custom-tiles": {
       "type": "vector",
-      "tiles": ["http://localhost:8080/data/{z}/{x}/{y}.pbf"],
+      "tiles": [
+        "http://localhost:8080/data/{z}/{x}/{y}.pbf"
+      ],
       "minzoom": 5,
       "maxzoom": 14
     }
   },
   "layers": [
     {
-      "id": "buildings",
-      "type": "line",
-      "source": "custom-tiles",
-      "source-layer": "building",
-      "paint": { "line-color": "#198EC8" }
-    },
-    {
-      "id": "land",
+      "id": "custom-layer",
       "type": "fill",
       "source": "custom-tiles",
       "source-layer": "landcover",
