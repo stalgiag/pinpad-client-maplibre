@@ -1,3 +1,18 @@
+tiles.zip is a zipping of a directory structured like this:
+```
+tiles
+├── data
+│   ├── 10
+│   │   ├── 300
+│   │   │   ├── 364.pbf
+│   └── config.json
+├── serve.json
+└── style.json
+```
+I think only the pbfs are currently in use.
+
+It is gitignored in both places. Inside of ios, I used Xcode to move a file, but (I hope...) that's not necessary.
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

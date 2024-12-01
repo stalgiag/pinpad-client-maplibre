@@ -1,3 +1,3 @@
 module.exports = {
-  assets: ['./tiles/data'],
+  assets: ['./assets'],
 };

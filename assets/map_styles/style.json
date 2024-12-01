@@ -4,7 +4,7 @@
     "custom-tiles": {
       "type": "vector",
       "tiles": [
-        "http://localhost:8080/data/{z}/{x}/{y}.pbf"
+        "http://127.0.0.1:8080/data/{z}/{x}/{y}.pbf"
       ],
       "minzoom": 5,
       "maxzoom": 14
