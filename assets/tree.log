@@ -1,8 +1,0 @@
-tiles
-├── data
-│   ├── 10
-│   │   ├── 300
-│   │   │   ├── 364.pbf
-│   └── config.json
-├── serve.json
-└── style.json

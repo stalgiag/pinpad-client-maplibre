@@ -1,17 +1,13 @@
-tiles.zip is a zipping of a directory structured like this:
+We have tiles for testing in tiles.zip. It is a zipping of a directory structured like this, with tiles in z/x/y format:
 ```
 tiles
 ├── data
-│   ├── 10
-│   │   ├── 300
-│   │   │   ├── 364.pbf
-│   └── config.json
-├── serve.json
-└── style.json
+│   ├── 10               // z
+│   │   ├── 300          // x
+│   │   │   ├── 364.pbf  // y
 ```
-I think only the pbfs are currently in use.
 
-It is gitignored in both places. Inside of ios, I used Xcode to move a file, but (I hope...) that's not necessary.
+I may have had to manually drop this file in place via Xcode to get things working for iOS, not sure.d
 
 # Welcome to your Expo app 👋
 

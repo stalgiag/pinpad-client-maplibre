@@ -13,17 +13,17 @@ const tilesZip = require("./assets/tiles.zip");
 
 export default function App() {
   const [serverURL, setServerURL] = useState(null);
-  const [mapStyle, setMapStyle] = useState(null); // Use dynamic style.json
+  const [mapStyle, setMapStyle] = useState(null);
 
   useEffect(() => {
     const setupTiles = async () => {
       try {
         // Define paths
-        const extractionPath = `${RNFS.MainBundlePath}/tiles`; // Path for extraction
+        const extractionPath = `${RNFS.MainBundlePath}/tiles`;
         const zipDestinationPath = `${RNFS.MainBundlePath}/tiles.zip`;
 
-        console.log(`ZIP Destination Path: ${zipDestinationPath}`);
         console.log(`Extraction Path: ${extractionPath}`);
+        console.log(`ZIP Destination Path: ${zipDestinationPath}`);
 
         // Copy the bundled ZIP file to a writable directory
         const fileExists = await RNFS.exists(zipDestinationPath);
@@ -34,7 +34,6 @@ export default function App() {
           console.log("tiles.zip already exists in writable directory.");
         }
 
-        // Ensure extraction directory exists
         const dirExists = await RNFS.exists(extractionPath);
         if (!dirExists) {
           console.log("Extracting ZIP...");
@@ -44,7 +43,6 @@ export default function App() {
           console.log("Extraction skipped. Directory already exists.");
         }
 
-        // Log server options
         console.log("Starting static server with options:", {
           fileDir: dataDir,
           port: 8080,
@@ -55,9 +53,7 @@ export default function App() {
         console.log(`dataDir is ${dataDir}`);
         const staticServer = new Server({ fileDir: dataDir, port: 8080 });
         const url = await staticServer.start();
-        console.log("Static server started at:", url);
-        console.log(`what is ${staticServer.fileDir}`);
-        console.log(`what is ${staticServer.origin}`);
+        console.log(`Static server started at ${url} with fileDir ${staticServer.fileDir} and origin ${staticServer.fileDir}` );
         setServerURL(url);
 
         // Dynamically update style.json with the tiles path
@@ -100,7 +96,6 @@ export default function App() {
         <MapLibreGL.VectorSource
           id="custom-tiles"
           tileUrlTemplates={[`${serverURL}/{z}/{x}/{y}.pbf`]} // Use dynamic server URL
-          // tileUrlTemplates={["http://127.0.0.1:8080/data/{z}/{x}/{y}.pbf"]}
           minZoomLevel={5}
           maxZoomLevel={14}
         >

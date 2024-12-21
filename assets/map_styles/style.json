@@ -9,16 +9,5 @@
       "minzoom": 5,
       "maxzoom": 14
     }
-  },
-  "layers": [
-    {
-      "id": "custom-layer",
-      "type": "fill",
-      "source": "custom-tiles",
-      "source-layer": "landcover",
-      "paint": {
-        "fill-color": "#3388ff"
-      }
-    }
-  ]
+  }
 }
