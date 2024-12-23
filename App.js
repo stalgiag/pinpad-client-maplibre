@@ -7,14 +7,14 @@ MapLibreGL.setAccessToken(null); // No token needed for custom tile servers
 export default function App() {
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map} styleURL="http://localhost:8080/style.json">
+      <MapLibreGL.MapView style={styles.map} styleURL="http://10.0.2.2:8080/style.json">
         <MapLibreGL.Camera
           zoomLevel={14}
           centerCoordinate={[-73.72826520392081, 45.584043985983]}
         />
         <MapLibreGL.VectorSource
           id="custom-tiles"
-          tileUrlTemplates={["http://localhost:8080/data/{z}/{x}/{y}.pbf"]}
+          tileUrlTemplates={["http://10.0.2.2:8080/data/{z}/{x}/{y}.pbf"]}
           minZoomLevel={5}
           maxZoomLevel={14}
         >
