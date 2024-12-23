@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "start:tiles": "serve -s ./tiles -p 8080",
+    "start:tiles": "serve -s ./assets/tiles -p 8080",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
