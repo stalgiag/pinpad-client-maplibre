@@ -5,7 +5,6 @@ import { unzip } from "react-native-zip-archive";
 import Server from "@dr.pogodin/react-native-static-server";
 import MapLibreGL from "@maplibre/maplibre-react-native";
 
-
 MapLibreGL.setAccessToken(null); // Not needed for custom tile servers
 
 export default function App() {
@@ -20,19 +19,19 @@ export default function App() {
 
         console.log("Copying tiles.zip to a writable directory...");
 
-        if (Platform.OS === "android") {
-          // On Android, use copyFileAssets
-          await RNFS.copyFileAssets("tiles.zip", zipDestinationPath);
-        } else {
-          // On iOS, use copyFile with MainBundlePath
-          const assetPath = `${RNFS.MainBundlePath}/tiles.zip`;
-          const fileExists = await RNFS.exists(zipDestinationPath);
-          if (!fileExists) {
-            await RNFS.copyFile(assetPath, zipDestinationPath);
+        const fileExists = await RNFS.exists(zipDestinationPath);
+        if (!fileExists) {
+          if (Platform.OS === "android") {
+            // On Android, use copyFileAssets
+            await RNFS.copyFileAssets("tiles.zip", zipDestinationPath);
           } else {
-            console.log("tiles.zip already exists in writable directory.");
+            // On iOS, use copyFile with MainBundlePath
+            const assetPath = `${RNFS.MainBundlePath}/tiles.zip`;
+            await RNFS.copyFile(assetPath, zipDestinationPath);
           }
-          }
+        } else {
+          console.log("tiles.zip already exists in writable directory.");
+        }
 
         console.log("tiles.zip copied successfully.");
 
@@ -74,7 +73,10 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map} styleURL={`${serverURL}/style.json`}>
+      <MapLibreGL.MapView
+        style={styles.map}
+        styleURL={`${serverURL}/style.json`}
+      >
         <MapLibreGL.Camera
           zoomLevel={14}
           centerCoordinate={[-73.72826520392081, 45.584043985983]}
