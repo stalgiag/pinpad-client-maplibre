@@ -5,9 +5,10 @@ tiles
 │   ├── 10               // z
 │   │   ├── 300          // x
 │   │   │   ├── 364.pbf  // y
+└── style.json
 ```
 
-I may have had to manually drop this file in place via Xcode to get things working for iOS, not sure.d
+I may have had to manually drop this file in place via Xcode to get things working for iOS, not sure.
 
 # Welcome to your Expo app 👋
 
