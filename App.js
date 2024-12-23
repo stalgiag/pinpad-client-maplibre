@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import * as RNFS from '@dr.pogodin/react-native-fs';
+import { StyleSheet, View, Platform } from "react-native";
+import * as RNFS from "@dr.pogodin/react-native-fs";
 import { unzip } from "react-native-zip-archive";
 import Server from "@dr.pogodin/react-native-static-server";
 import MapLibreGL from "@maplibre/maplibre-react-native";
 
-MapLibreGL.setAccessToken(null); // No token needed for custom tile servers
 
-// Explicitly require style.json and tiles.zip to ensure they're bundled
-const tilesZip = "./assets/tiles.zip";
+MapLibreGL.setAccessToken(null); // Not needed for custom tile servers
 
 export default function App() {
   const [serverURL, setServerURL] = useState(null);
@@ -20,52 +18,65 @@ export default function App() {
         const extractionPath = `${RNFS.DocumentDirectoryPath}/tiles`;
         const zipDestinationPath = `${RNFS.DocumentDirectoryPath}/tiles.zip`;
 
-        console.log(`Extraction Path: ${extractionPath}`);
-        console.log(`ZIP Destination Path: ${zipDestinationPath}`);
+        console.log("Copying tiles.zip to a writable directory...");
 
-          console.log("Copying tiles.zip to writable directory...");
+        if (Platform.OS === "android") {
+          // On Android, use copyFileAssets
           await RNFS.copyFileAssets("tiles.zip", zipDestinationPath);
+        } else {
+          // On iOS, use copyFile with MainBundlePath
+          const assetPath = `${RNFS.MainBundlePath}/tiles.zip`;
+          await RNFS.copyFile(assetPath, zipDestinationPath);
+        }
 
-          console.log("Extracting ZIP...");
-          await unzip(zipDestinationPath, extractionPath);
-          console.log("Extraction complete.");
+        console.log("tiles.zip copied successfully.");
 
-        // Start the static server
-        let dataDir = extractionPath + "/tiles";
-        const staticServer = new Server({ fileDir: dataDir, port: 8080 });
-        console.log(`dataDir contains ${await RNFS.readdir(dataDir)}`);
+        console.log("Unzipping...");
+        await unzip(zipDestinationPath, extractionPath);
+        console.log("Extraction complete");
+
+        // e.g., final extracted path: <DocumentDirectoryPath>/tiles/tiles/*.pbf
+        const dataDir = `${extractionPath}/tiles`;
+
+        // Start the static server on port 8080
+        const staticServer = new Server({
+          fileDir: dataDir,
+          port: 8080,
+        });
         const url = await staticServer.start();
-        console.log(
-          `Static server started at ${url} with fileDir ${staticServer.fileDir} and origin ${staticServer.fileDir}`
-        );
-        setServerURL(url);
+        console.log(`Static server started: ${url}`);
 
+        setServerURL(url);
       } catch (error) {
-        console.error("Error setting up tiles:", error.stack);
+        console.error("Error setting up tiles:", error);
       }
     };
 
     setupTiles();
 
     return () => {
-      console.log("Cleaning up...");
+      // Cleanup: Stop the server if needed
+      // Example:
+      // if (staticServer) {
+      //   staticServer.stop();
+      // }
     };
-  }, []); // Empty dependency array ensures this only runs once
+  }, []);
 
   if (!serverURL) {
-    return null; // Render nothing until the server is ready
+    return null; // or some loading indicator
   }
 
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map} styleURL="http://10.0.2.2:8080/style.json">
+      <MapLibreGL.MapView style={styles.map} styleURL={`${serverURL}/style.json`}>
         <MapLibreGL.Camera
           zoomLevel={14}
           centerCoordinate={[-73.72826520392081, 45.584043985983]}
         />
         <MapLibreGL.VectorSource
           id="custom-tiles"
-          tileUrlTemplates={[`http://10.0.2.2:8080/data/{z}/{x}/{y}.pbf`]} // Use dynamic server URL
+          tileUrlTemplates={[`${serverURL}/data/{z}/{x}/{y}.pbf`]}
           minZoomLevel={5}
           maxZoomLevel={14}
         >
@@ -88,10 +99,6 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  map: { flex: 1 },
 });
