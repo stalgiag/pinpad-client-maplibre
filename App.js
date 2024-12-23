@@ -26,8 +26,13 @@ export default function App() {
         } else {
           // On iOS, use copyFile with MainBundlePath
           const assetPath = `${RNFS.MainBundlePath}/tiles.zip`;
-          await RNFS.copyFile(assetPath, zipDestinationPath);
-        }
+          const fileExists = await RNFS.exists(zipDestinationPath);
+          if (!fileExists) {
+            await RNFS.copyFile(assetPath, zipDestinationPath);
+          } else {
+            console.log("tiles.zip already exists in writable directory.");
+          }
+          }
 
         console.log("tiles.zip copied successfully.");
 
