@@ -36,6 +36,7 @@ yarn-error.*
 *.tsbuildinfo
 
 # sample tile data
-tiles/data/
+assets/tiles/data/
+assets/tiles.zip
 
 app-example

@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import styleJSON from "./assets/map_styles/style.json";
 import MapLibreGL from "@maplibre/maplibre-react-native";
 
 MapLibreGL.setAccessToken(null); // No token needed for custom tile servers
@@ -8,9 +7,9 @@ MapLibreGL.setAccessToken(null); // No token needed for custom tile servers
 export default function App() {
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map} styleJSON={styleJSON}>
+      <MapLibreGL.MapView style={styles.map} styleURL="http://localhost:8080/style.json">
         <MapLibreGL.Camera
-          zoomLevel={5}
+          zoomLevel={14}
           centerCoordinate={[-73.72826520392081, 45.584043985983]}
         />
         <MapLibreGL.VectorSource
