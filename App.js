@@ -7,11 +7,13 @@ import MapLibreGL from "@maplibre/maplibre-react-native";
 
 MapLibreGL.setAccessToken(null); // Not needed for custom tile servers
 
+const USE_EXTERNAL_SERVER = true;
+
 export default function App() {
   const [serverURL, setServerURL] = useState(null);
 
   useEffect(() => {
-    const setupTiles = async () => {
+    const setupTilesInternalServer = async () => {
       try {
         // Define paths
         const extractionPath = `${RNFS.DocumentDirectoryPath}/tiles`;
@@ -56,7 +58,24 @@ export default function App() {
       }
     };
 
-    setupTiles();
+    const setupTilesExternalServer = async () => {
+      if (Platform.OS === "android") {
+        setServerURL("http://10.0.2.2:8080");
+      } else {
+        setServerURL("http://localhost:8080");
+      }
+      console.log(`Using external server at url: ${serverURL}`);
+    };
+
+    const setupTiles = async (externalServer) => {
+      if (externalServer) {
+        await setupTilesExternalServer();
+      } else {
+        await setupTilesInternalServer();
+      }
+    };
+
+    setupTiles(USE_EXTERNAL_SERVER);
 
     return () => {
       // Cleanup: Stop the server if needed
