@@ -2,6 +2,8 @@
 
 A Signal extension for private mapping based on [MapLibre](https://github.com/maplibre/maplibre-native).
 
+Current state: [the app](App.js) has two modes determined by the boolean `USE_EXTERNAL_SERVER.` When using an external tile server, the app acts as a simple map viewer. When the boolean is false, the app will unzip a given set of tiles, instantiate a tile server within the device, and act as a viewer for those tiles.
+
 # Development
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -23,6 +25,28 @@ Expo is most useful when you can use some of its built in modules that ensure a 
 
 The commands `yarn expo prebuild` does some platform-specific stuff. I think it's not necessary to run it now (it'll just prettify some of the platform-specific config files?).
 
+## External tile server
+When `USE_EXTERNAL_SERVER` is true, the app looks for tiles at a given address. For development purposes, we provide a server that 
+can be run on the host machine via `yarn start:tiles`. 
+
+# Test tiles
+
+We have tiles for testing in tiles.zip. It is a zipping of a directory structured like this, with tiles in z/x/y format:
+```
+tiles
+├── data
+│   ├── 10               // z
+│   │   ├── 300          // x
+│   │   │   ├── 364.pbf  // y
+└── style.json
+```
+
+To supply these through an external tile server, unzip into `assets/`. The directory `assets/tiles` should be created. The zip file can be created through the command 
+```
+zip -r tiles.zip tiles
+```
+
+
 
 ## iOS
 To builds for iOS, you need to be on a Mac. You need to have Xcode installed. This in particular allows you to install a simulator. To access these, go to **Xcode > Open Developer Tool > Simulator**. Here you can make add a simulator under **File > New Simulator**. For this to work you'll have to an iOS version available to install on the simulator. This can be achieved through Xcode via **Settings > Components (tab)**.
@@ -42,17 +66,3 @@ For Android you need to launch a simulator first. Then
 yarn android
 ``` 
 should detect it and run your code there.
-
-# Test tiles
-
-We have tiles for testing in tiles.zip. It is a zipping of a directory structured like this, with tiles in z/x/y format:
-```
-tiles
-├── data
-│   ├── 10               // z
-│   │   ├── 300          // x
-│   │   │   ├── 364.pbf  // y
-└── style.json
-```
-
-I may have had to manually drop this file in place via Xcode to get things working for iOS, but I don't think that's necessary in our current setup.
