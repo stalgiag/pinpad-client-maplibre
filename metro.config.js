@@ -2,7 +2,7 @@ const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.assetExts.push("zip");
+config.resolver.assetExts.push("drift"); // bundle test tiles 
 config.resolver.sourceExts.push("cjs");
 
 module.exports = config;

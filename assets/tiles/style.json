@@ -2,13 +2,6 @@
   "version": 8,
   "layers": [
     {
-      "id": "buildings",
-      "type": "line",
-      "source": "custom-tiles",
-      "source-layer": "building",
-      "paint": { "line-color": "#198EC8" }
-    },
-    {
       "id": "land",
       "type": "fill",
       "source": "custom-tiles",
@@ -16,6 +9,13 @@
       "paint": {
         "fill-color": "#3388ff"
       }
+    },
+    {
+      "id": "transportation",
+      "type": "line",
+      "source": "custom-tiles",
+      "source-layer": "transportation",
+      "paint": { "line-color": "#198EC8" }
     }
   ]
 }
