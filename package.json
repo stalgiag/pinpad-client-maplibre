@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "generate-test-data": "zip -r test.drift assets/tiles && cp test.drift ios/ && cp test.drift android/app/src/main/assets/ && rm test.drift"
+    "generate-test-data": "cd assets && zip -r test.drift tiles && cd ../ && mv assets/test.drift . && cp test.drift ios/ && cp test.drift android/app/src/main/assets/ && rm test.drift"
   },
   "jest": {
     "preset": "jest-expo"
