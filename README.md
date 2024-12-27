@@ -31,7 +31,7 @@ can be run on the host machine via `yarn start:tiles`.
 
 # Test tiles
 
-We have tiles for testing in tiles.zip. It is a zipping of a directory structured like this, with tiles in z/x/y format:
+`We have tiles for testing in assets/. A `.drift` file is a zipping of a directory structured like this, with tiles in z/x/y format:
 ```
 tiles
 ├── data
@@ -41,9 +41,9 @@ tiles
 └── style.json
 ```
 
-To supply these through an external tile server, unzip into `assets/`. The directory `assets/tiles` should be created. The zip file can be created through the command 
+**To generate these files for testing, run**
 ```
-zip -r tiles.zip tiles
+yarn generate-test-data
 ```
 
 

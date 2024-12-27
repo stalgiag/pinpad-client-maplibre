@@ -7,7 +7,7 @@ import MapLibreGL from "@maplibre/maplibre-react-native";
 
 MapLibreGL.setAccessToken(null); // Not needed for custom tile servers
 
-const USE_EXTERNAL_SERVER = true;
+const USE_EXTERNAL_SERVER = false;
 
 export default function App() {
   const [serverURL, setServerURL] = useState(null);
@@ -17,25 +17,25 @@ export default function App() {
       try {
         // Define paths
         const extractionPath = `${RNFS.DocumentDirectoryPath}/tiles`;
-        const zipDestinationPath = `${RNFS.DocumentDirectoryPath}/tiles.zip`;
+        const zipDestinationPath = `${RNFS.DocumentDirectoryPath}/test.drift`;
 
-        console.log("Copying tiles.zip to a writable directory...");
+        console.log("Copying test.drift to a writable directory...");
 
         const fileExists = await RNFS.exists(zipDestinationPath);
         if (!fileExists) {
           if (Platform.OS === "android") {
             // On Android, use copyFileAssets
-            await RNFS.copyFileAssets("tiles.zip", zipDestinationPath);
+            await RNFS.copyFileAssets("test.drift", zipDestinationPath);
           } else {
             // On iOS, use copyFile with MainBundlePath
-            const assetPath = `${RNFS.MainBundlePath}/tiles.zip`;
+            const assetPath = `${RNFS.MainBundlePath}/test.drift`;
             await RNFS.copyFile(assetPath, zipDestinationPath);
           }
         } else {
-          console.log("tiles.zip already exists in writable directory.");
+          console.log("test.drift already exists in writable directory.");
         }
 
-        console.log("tiles.zip copied successfully.");
+        console.log("test.drift copied successfully.");
 
         console.log("Unzipping...");
         await unzip(zipDestinationPath, extractionPath);
@@ -50,7 +50,7 @@ export default function App() {
           port: 8080,
         });
         const url = await staticServer.start();
-        console.log(`Static server started: ${url}`);
+        console.log(`Static server started at ${url}`);
 
         setServerURL(url);
       } catch (error) {
@@ -97,14 +97,14 @@ export default function App() {
         styleURL={`${serverURL}/style.json`}
       >
         <MapLibreGL.Camera
-          zoomLevel={14}
+          zoomLevel={9}
           centerCoordinate={[-73.72826520392081, 45.584043985983]}
         />
         <MapLibreGL.VectorSource
           id="custom-tiles"
           tileUrlTemplates={[`${serverURL}/data/{z}/{x}/{y}.pbf`]}
           minZoomLevel={5}
-          maxZoomLevel={14}
+          maxZoomLevel={10}
         >
           <MapLibreGL.FillLayer
             id="land"
@@ -113,9 +113,9 @@ export default function App() {
             style={{ fillColor: "#3388ff" }}
           />
           <MapLibreGL.LineLayer
-            id="buildings"
+            id="transportation"
             sourceID="custom-tiles"
-            sourceLayerID="building"
+            sourceLayerID="transportation"
             style={{ lineColor: "#198EC8" }}
           />
         </MapLibreGL.VectorSource>
