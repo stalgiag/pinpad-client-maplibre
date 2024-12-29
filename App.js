@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Platform } from "react-native";
 import * as RNFS from "@dr.pogodin/react-native-fs";
 import { unzip } from "react-native-zip-archive";
-import Server from "@dr.pogodin/react-native-static-server";
+import Server, {
+  getActiveServerId,
+  STATES,
+} from "@dr.pogodin/react-native-static-server";
 import MapLibreGL from "@maplibre/maplibre-react-native";
 
 MapLibreGL.setAccessToken(null); // Not needed for custom tile servers
@@ -13,29 +16,30 @@ export default function App() {
   const [serverURL, setServerURL] = useState(null);
 
   useEffect(() => {
+
+    let staticServer; // set if USE_EXTERNAL_SERVER is false
+
     const setupTilesInternalServer = async () => {
       try {
-        // Define paths
         const extractionPath = `${RNFS.DocumentDirectoryPath}/tiles`;
         const zipDestinationPath = `${RNFS.DocumentDirectoryPath}/test.drift`;
 
-        console.log("Copying test.drift to a writable directory...");
-
         const fileExists = await RNFS.exists(zipDestinationPath);
-        if (!fileExists) {
-          if (Platform.OS === "android") {
-            // On Android, use copyFileAssets
-            await RNFS.copyFileAssets("test.drift", zipDestinationPath);
-          } else {
-            // On iOS, use copyFile with MainBundlePath
-            const assetPath = `${RNFS.MainBundlePath}/test.drift`;
-            await RNFS.copyFile(assetPath, zipDestinationPath);
-          }
-        } else {
-          console.log("test.drift already exists in writable directory.");
+        if (fileExists) {
+          console.log("Deleting existing .drift file and extraction")
+          await RNFS.unlink(zipDestinationPath);
+          await RNFS.unlink(extractionPath);
         }
 
-        console.log("test.drift copied successfully.");
+        console.log("Copying test.drift to a writable directory...");
+        if (Platform.OS === "android") {
+          // On Android, use copyFileAssets
+          await RNFS.copyFileAssets("test.drift", zipDestinationPath);
+        } else {
+          // On iOS, use copyFile with MainBundlePath
+          const assetPath = `${RNFS.MainBundlePath}/test.drift`;
+          await RNFS.copyFile(assetPath, zipDestinationPath);
+        }
 
         console.log("Unzipping...");
         await unzip(zipDestinationPath, extractionPath);
@@ -44,15 +48,29 @@ export default function App() {
         // e.g., final extracted path: <DocumentDirectoryPath>/tiles/tiles/*.pbf
         const dataDir = `${extractionPath}/tiles`;
 
-        // Start the static server on port 8080
-        const staticServer = new Server({
-          fileDir: dataDir,
-          port: 8080,
-        });
-        const url = await staticServer.start();
-        console.log(`Static server started at ${url}`);
+        const activeServerId = await getActiveServerId();
+        if (activeServerId) {
+          console.log(`active server id is ${activeServerId}`);
+          staticServer = new Server({
+            fileDir: dataDir,
+            port: 8080,
+            stopInBackground: true,
+            id: activeServerId,
+            sate: STATES.ACTIVE,
+          });
+          setServerURL(staticServer.origin);
+        } else {
+          // Start the static server on port 8080
+          staticServer = new Server({
+            fileDir: dataDir,
+            port: 8080,
+            stopInBackground: true,
+          });
+          const url = await staticServer.start();
+          console.log(`Static server started at ${url}`);
 
-        setServerURL(url);
+          setServerURL(url);
+        }
       } catch (error) {
         console.error("Error setting up tiles:", error);
       }
@@ -78,11 +96,9 @@ export default function App() {
     setupTiles(USE_EXTERNAL_SERVER);
 
     return () => {
-      // Cleanup: Stop the server if needed
-      // Example:
-      // if (staticServer) {
-      //   staticServer.stop();
-      // }
+      if (staticServer) {
+        staticServer.stop();
+      }
     };
   }, []);
 
@@ -110,13 +126,13 @@ export default function App() {
             id="land"
             sourceID="custom-tiles"
             sourceLayerID="landcover"
-            style={{ fillColor: "#3388ff" }}
+            style={{ fillColor: "#00FF00" }}
           />
           <MapLibreGL.LineLayer
             id="transportation"
             sourceID="custom-tiles"
             sourceLayerID="transportation"
-            style={{ lineColor: "#198EC8" }}
+            style={{ lineColor: "#FF0000" }}
           />
         </MapLibreGL.VectorSource>
       </MapLibreGL.MapView>
