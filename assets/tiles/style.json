@@ -2,20 +2,22 @@
   "version": 8,
   "layers": [
     {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#FFFFFF"
+      }
+    },    {
       "id": "land",
       "type": "fill",
       "source": "custom-tiles",
-      "source-layer": "landcover",
-      "paint": {
-        "fill-color": "#3388ff"
-      }
+      "source-layer": "landcover"
     },
     {
       "id": "transportation",
       "type": "line",
       "source": "custom-tiles",
-      "source-layer": "transportation",
-      "paint": { "line-color": "#198EC8" }
+      "source-layer": "transportation"
     }
   ]
 }
