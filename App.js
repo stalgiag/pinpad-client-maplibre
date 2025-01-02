@@ -16,7 +16,6 @@ export default function App() {
   const [serverURL, setServerURL] = useState(null);
 
   useEffect(() => {
-
     let staticServer; // set if USE_EXTERNAL_SERVER is false
 
     const setupTilesInternalServer = async () => {
@@ -26,7 +25,7 @@ export default function App() {
 
         const fileExists = await RNFS.exists(zipDestinationPath);
         if (fileExists) {
-          console.log("Deleting existing .drift file and extraction")
+          console.log("Deleting existing .drift file and extraction");
           await RNFS.unlink(zipDestinationPath);
           await RNFS.unlink(extractionPath);
         }
