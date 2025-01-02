@@ -81,14 +81,10 @@ should detect it and run your code there.
 ## Docker
 
 We have a docker container for development, complete with a devcontainer.json for easy development in VS Code. It seems to be inadvisable to run a simulator inside of a container (maybe headless is ok?), so what we do is create a container for development, work inside of that, and then run the code on a simulator outside of the container. For this, set up the in the Android section, launch a simulator, in the container run
-
 ```
-export ADB_SERVER_SOCKET=tcp:host.docker.internal:5037
-adb kill-server
 adb devices
 ```
-
-You should see a refernce to a device. If this works, then run `yarn expo start`. Then, in the repo but outside of the container, run `yarn android`, and the app should launch on your simulator.
+You should see a reference to a device. If this works, then run `yarn expo start`. Then, in the repo but outside of the container, run `yarn android`, and the app should launch on your simulator.
 
 If running in iOS, you may need to install
 
