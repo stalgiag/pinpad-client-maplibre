@@ -23,11 +23,11 @@ RUN apt update && apt install -y \
 RUN groupadd -r devgroup && \
     useradd -m -r -g devgroup me
 
-WORKDIR /home/me
+WORKDIR /workspaces
 
 # Install Android SDK
 USER root
-ENV ANDROID_HOME=/home/me/Android/Sdk
+ENV ANDROID_HOME=/workspaces/Android/Sdk
 ENV PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 RUN mkdir -p ${ANDROID_HOME}/cmdline-tools/latest
 RUN curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
@@ -39,8 +39,8 @@ RUN curl -o commandlinetools.zip https://dl.google.com/android/repository/comman
 # Ensure sdkmanager is executable
 RUN chmod +x ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager
 # Accept licenses and install essential SDK components
-RUN yes | /home/me/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --licenses && \
-    /home/me/Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+RUN yes | /workspaces/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --licenses && \
+    /workspaces/Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
 
 
 USER me
