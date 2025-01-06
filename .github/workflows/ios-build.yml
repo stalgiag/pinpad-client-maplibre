@@ -28,5 +28,6 @@ jobs:
 
       - name: Test build setup
         run: |
+          set -eo pipefail # Make script exit on any error
           yarn expo prebuild --platform ios --clean
           yarn expo run:ios --configuration Debug --no-build-cache
