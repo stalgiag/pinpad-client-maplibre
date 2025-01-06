@@ -34,4 +34,12 @@ jobs:
           fi
           cd ..
           yarn generate-test-data
-          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build
+          cd ios
+          SDK_VERSION=$(xcodebuild -showsdks | grep 'Simulator - iOS' | grep -o 'iphonesimulator[0-9.]*' | head -1)
+          OS_VERSION=$(echo $SDK_VERSION | grep -o '[0-9.]*')
+          xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
+            -scheme pinpadclientmaplibre \
+            -configuration Debug \
+            -sdk $SDK_VERSION \
+            -destination "platform=iOS Simulator,OS=$OS_VERSION,name=iPhone 15" \
+            build
