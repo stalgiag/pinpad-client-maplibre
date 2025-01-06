@@ -34,4 +34,4 @@ jobs:
           fi
           cd ..
           yarn generate-test-data
-          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14' build
+          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build
