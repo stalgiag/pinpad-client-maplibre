@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Generate test data
-        run: yarn generate-test-data
-
       - name: Test build setup
         shell: bash
         run: |
@@ -36,4 +33,5 @@ jobs:
             exit 1
           fi
           cd ..
+          yarn generate-test-data
           yarn expo run:ios --configuration Debug --no-build-cache
