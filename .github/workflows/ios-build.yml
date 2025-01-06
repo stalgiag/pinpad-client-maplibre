@@ -27,7 +27,8 @@ jobs:
         run: yarn generate-test-data
 
       - name: Test build setup
+        shell: bash
         run: |
-          set -eo pipefail # Make script exit on any error
           yarn expo prebuild --platform ios --clean
           yarn expo run:ios --configuration Debug --no-build-cache
+          exit $?
