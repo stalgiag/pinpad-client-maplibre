@@ -30,5 +30,10 @@ jobs:
         shell: bash
         run: |
           yarn expo prebuild --platform ios --clean
+          cd ios
+          if ! pod install; then
+            echo "Pod install failed"
+            exit 1
+          fi
+          cd ..
           yarn expo run:ios --configuration Debug --no-build-cache
-          exit $?
