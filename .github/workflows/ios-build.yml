@@ -36,15 +36,9 @@ jobs:
           yarn generate-test-data
           cd ios
           
-          # Debug: Show current directory
-          pwd
-          echo "Contents of current directory:"
-          ls -la
-          
           SDK_VERSION=$(xcodebuild -showsdks | grep 'Simulator - iOS' | grep -o 'iphonesimulator[0-9.]*' | head -1)
           OS_VERSION=$(echo $SDK_VERSION | grep -o '[0-9.]*')
           
-          # Add -derivedDataPath flag to specify build output location
           xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
             -scheme pinpadclientmaplibre \
             -configuration Debug \
@@ -52,33 +46,21 @@ jobs:
             -destination "platform=iOS Simulator,OS=$OS_VERSION,name=iPhone 15" \
             -derivedDataPath build \
             build
-          
-          # Debug: Show build directory contents
-          echo "Contents of build directory:"
-          ls -R build/
-
-      - name: Start Expo and run tests
-        timeout-minutes: 10
+  
+      - name: Run Tests
         run: |
-          # Boot simulator
-          xcrun simctl boot 'iPhone 15'
+          # Boot the simulator
+          SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" "iPhone 15" "iOS$OS_VERSION")
+          xcrun simctl boot "$SIMULATOR_UDID"
           
-          # Debug: Show current directory and build location
-          pwd
-          echo "Looking for build artifacts:"
-          ls -R ios/build/
+          # Install the app
+          xcrun simctl install "$SIMULATOR_UDID" "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
           
-          # Install the app (updated path based on derivedDataPath)
-          xcrun simctl install 'iPhone 15' "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
-          
-          # Start Expo in the background
+          # Start Expo server and run tests
           yarn expo start & 
-          
-          # Wait for Metro to be ready
           sleep 15
-          
-          # Run Maestro tests
           maestro test tests/*.yaml
-        env:
-          CI: true
-          PATH: ${{ env.PATH }}:${{ env.HOME }}/.maestro/bin
+          
+          # Clean up
+          xcrun simctl shutdown "$SIMULATOR_UDID"
+          xcrun simctl delete "$SIMULATOR_UDID"
