@@ -36,7 +36,13 @@
         }
       ],
       "@maplibre/maplibre-react-native",
-      "./plugins/withIosDeploymentTarget"
+      "./plugins/withIosDeploymentTarget",
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/test.drift"]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -5,19 +5,97 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#FFFFFF"
+        "background-color": "#1a1a1a"
       }
-    },    {
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "custom-tiles",
+      "source-layer": "water",
+      "paint": {
+        "fill-color": "#000000",
+        "fill-opacity": 0.8
+      }
+    },
+    {
       "id": "land",
       "type": "fill",
       "source": "custom-tiles",
-      "source-layer": "landcover"
+      "source-layer": "landcover",
+      "paint": {
+        "fill-color": "#2b2b2b",
+        "fill-opacity": 0.9
+      }
     },
     {
-      "id": "transportation",
+      "id": "landuse",
+      "type": "fill",
+      "source": "custom-tiles",
+      "source-layer": "landuse",
+      "paint": {
+        "fill-color": [
+          "match",
+          ["get", "class"],
+          "park", "#331111",
+          "industrial", "#4d1a1a",
+          "residential", "#662222",
+          "commercial", "#802929",
+          "#2b2b2b"
+        ],
+        "fill-opacity": 0.8
+      }
+    },
+    {
+      "id": "buildings",
+      "type": "fill",
+      "source": "custom-tiles",
+      "source-layer": "buildings",
+      "paint": {
+        "fill-color": "#404040",
+        "fill-opacity": 0.9,
+        "fill-outline-color": "#000000"
+      }
+    },
+    {
+      "id": "transportation_minor",
       "type": "line",
       "source": "custom-tiles",
-      "source-layer": "transportation"
+      "source-layer": "transportation",
+      "filter": ["!in", "class", "primary", "secondary", "motorway"],
+      "paint": {
+        "line-color": "#992626",
+        "line-width": 1,
+        "line-opacity": 0.8
+      }
+    },
+    {
+      "id": "transportation_major",
+      "type": "line",
+      "source": "custom-tiles",
+      "source-layer": "transportation",
+      "filter": ["in", "class", "primary", "secondary", "motorway"],
+      "paint": {
+        "line-color": "#ff1a1a",
+        "line-width": 2,
+        "line-opacity": 1
+      }
+    },
+    {
+      "id": "place_labels",
+      "type": "symbol",
+      "source": "custom-tiles",
+      "source-layer": "place_labels",
+      "layout": {
+        "text-field": ["get", "name"],
+        "text-font": ["Open Sans Regular"],
+        "text-size": 12
+      },
+      "paint": {
+        "text-color": "#ff8080",
+        "text-halo-color": "#000000",
+        "text-halo-width": 2
+      }
     }
   ]
 }

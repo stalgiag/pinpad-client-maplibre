@@ -3,6 +3,7 @@ import { unzip } from 'react-native-zip-archive';
 import { Platform } from 'react-native';
 
 export class FileSystemService {
+  // TODO: Generalize these methods
   async extractTileBundle(bundleName: string, extractionPath: string): Promise<string> {
     const zipDestination = `${RNFS.DocumentDirectoryPath}/${bundleName}`;
 

@@ -11,16 +11,17 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "generate-test-data": "cd assets && zip -r test.drift tiles && cd ../ && mv assets/test.drift . && mkdir -p ios/ android/app/src/main/assets/ && cp test.drift ios/ && cp test.drift android/app/src/main/assets/ && rm test.drift"
+    "generate-test-data": "cd assets && zip -r test.drift tiles"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@dr.pogodin/react-native-fs": "^2.30.1",
     "@maplibre/maplibre-react-native": "^10.0.0-alpha.26",
     "@react-navigation/native": "^7.0.0",
-    "@dr.pogodin/react-native-fs": "^2.30.1",
     "expo": "~52.0.11",
+    "expo-asset": "~11.0.1",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",

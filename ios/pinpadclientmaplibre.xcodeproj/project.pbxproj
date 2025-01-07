@@ -91,6 +91,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
+				95BF75F6019A468AB5C32B1D /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -139,6 +140,14 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		95BF75F6019A468AB5C32B1D /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -157,6 +166,8 @@
 				D467983F06A8E10E8A22F94B /* [CP] Embed Pods Frameworks */,
 				BD86A669B9204324B9847F0A /* Remove signature files (Xcode workaround) */,
 				D5DB3F37BA9C419B9E69BB75 /* Remove signature files (Xcode workaround) */,
+				DE1AD24E96CB4405852F32D8 /* Remove signature files (Xcode workaround) */,
+				225D7E28AEDE454F872F4BDA /* Remove signature files (Xcode workaround) */,
 			);
 			buildRules = (
 			);
@@ -373,6 +384,40 @@
 			shellPath = /bin/sh;
 			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
 		};
+		DE1AD24E96CB4405852F32D8 /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Remove signature files (Xcode workaround)";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "
+    echo \"Remove signature files (Xcode workaround)\";
+    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";
+  ";
+		};
+		225D7E28AEDE454F872F4BDA /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Remove signature files (Xcode workaround)";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "
+    echo \"Remove signature files (Xcode workaround)\";
+    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";
+  ";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -414,7 +459,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.pinpadclientmaplibre;
-				PRODUCT_NAME = pinpadclientmaplibre;
+				PRODUCT_NAME = "pinpadclientmaplibre";
 				SWIFT_OBJC_BRIDGING_HEADER = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -431,7 +476,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pinpadclientmaplibre/pinpadclientmaplibre.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64";
 				INFOPLIST_FILE = pinpadclientmaplibre/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -443,7 +488,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.pinpadclientmaplibre;
-				PRODUCT_NAME = pinpadclientmaplibre;
+				PRODUCT_NAME = "pinpadclientmaplibre";
 				SWIFT_OBJC_BRIDGING_HEADER = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
