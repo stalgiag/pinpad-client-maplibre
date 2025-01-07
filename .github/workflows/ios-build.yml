@@ -74,6 +74,6 @@ jobs:
           sleep 15
           
           # Run Maestro tests
-          yarn test:maestro
+          yarn test:maestro:ios
         env:
           CI: true
