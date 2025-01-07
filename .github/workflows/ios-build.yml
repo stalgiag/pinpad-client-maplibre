@@ -1,4 +1,4 @@
-name: iOS Build and Render
+name: iOS Build and Test
 
 on:
   push:
@@ -23,15 +23,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Test build setup
-        shell: bash
+      - name: Build iOS app
         run: |
           yarn expo prebuild --platform ios --clean
           cd ios
-          if ! pod install; then
-            echo "Pod install failed"
-            exit 1
-          fi
+          pod install
           cd ..
           yarn generate-test-data
           cd ios
@@ -48,15 +44,23 @@ jobs:
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
-  
-      - name: Start Expo server and run Maestro tests
+
+      - name: Start Expo and run tests
+        timeout-minutes: 10
         run: |
+          # Boot simulator
+          xcrun simctl boot 'iPhone 15'
+          
+          # Install the app
+          xcrun simctl install 'iPhone 15' "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
+          
           # Start Expo in the background
           yarn expo start & 
+          
           # Wait for Metro to be ready
           sleep 15
-          # Boot simulator if needed and run tests
-          xcrun simctl list | grep -q 'Booted' || xcrun simctl boot 'iPhone 15'
+          
+          # Run Maestro tests
           yarn test:maestro
         env:
           CI: true
