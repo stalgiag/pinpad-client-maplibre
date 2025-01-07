@@ -31,19 +31,27 @@ jobs:
           cd ..
           yarn generate-test-data
           cd ios
+          
+          # Debug: Show current directory
+          pwd
+          echo "Contents of current directory:"
+          ls -la
+          
           SDK_VERSION=$(xcodebuild -showsdks | grep 'Simulator - iOS' | grep -o 'iphonesimulator[0-9.]*' | head -1)
           OS_VERSION=$(echo $SDK_VERSION | grep -o '[0-9.]*')
+          
+          # Add -derivedDataPath flag to specify build output location
           xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
             -scheme pinpadclientmaplibre \
             -configuration Debug \
             -sdk $SDK_VERSION \
             -destination "platform=iOS Simulator,OS=$OS_VERSION,name=iPhone 15" \
+            -derivedDataPath build \
             build
-
-      - name: Install Maestro
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          
+          # Debug: Show build directory contents
+          echo "Contents of build directory:"
+          ls -R build/
 
       - name: Start Expo and run tests
         timeout-minutes: 10
@@ -51,11 +59,12 @@ jobs:
           # Boot simulator
           xcrun simctl boot 'iPhone 15'
           
-          # Debug: List build directory contents
-          echo "Checking build directory contents:"
-          ls -R ios/build/Build/Products/
+          # Debug: Show current directory and build location
+          pwd
+          echo "Looking for build artifacts:"
+          ls -R ios/build/
           
-          # Install the app (using the correct path from the debug output)
+          # Install the app (updated path based on derivedDataPath)
           xcrun simctl install 'iPhone 15' "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
           
           # Start Expo in the background
