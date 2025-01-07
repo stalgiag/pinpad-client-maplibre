@@ -2,7 +2,6 @@ name: iOS Build and Test
 
 on:
   push:
-  pull_request:
 
 jobs:
   build:
@@ -22,6 +21,11 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Build iOS app
         run: |
@@ -74,6 +78,7 @@ jobs:
           sleep 15
           
           # Run Maestro tests
-          yarn test:maestro:ios
+          maestro test tests/*.yaml
         env:
           CI: true
+          PATH: ${{ env.PATH }}:${{ env.HOME }}/.maestro/bin
