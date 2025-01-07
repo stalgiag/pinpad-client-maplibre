@@ -155,6 +155,8 @@
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				DA810B8D8F2A46C5A83C95FD /* Remove signature files (Xcode workaround) */,
 				D467983F06A8E10E8A22F94B /* [CP] Embed Pods Frameworks */,
+				BD86A669B9204324B9847F0A /* Remove signature files (Xcode workaround) */,
+				D5DB3F37BA9C419B9E69BB75 /* Remove signature files (Xcode workaround) */,
 			);
 			buildRules = (
 			);
@@ -311,6 +313,20 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		BD86A669B9204324B9847F0A /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove signature files (Xcode workaround)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
+		};
 		D467983F06A8E10E8A22F94B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -328,6 +344,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D5DB3F37BA9C419B9E69BB75 /* Remove signature files (Xcode workaround) */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Remove signature files (Xcode workaround)";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
 		};
 		DA810B8D8F2A46C5A83C95FD /* Remove signature files (Xcode workaround) */ = {
 			isa = PBXShellScriptBuildPhase;
