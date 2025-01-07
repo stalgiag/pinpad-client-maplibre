@@ -12,7 +12,8 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "test:maestro": "maestro test tests/*.yaml",
-    "test:maestro:ios": "xcrun simctl list | grep -q 'Booted' || xcrun simctl boot 'iPhone 15' && expo start & sleep 10 && maestro test tests/*.yaml",
+    "test:maestro:ios": "bash tests/test-ios.sh",
+    "test:maestro:android": "bash tests/test-android.sh",
     "generate-test-data": "cd assets && zip -r test.drift tiles"
   },
   "jest": {

@@ -10,9 +10,9 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3C69C7A6105B9CA1A660F063 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F5B8457BA2E0AE89BFE2B67F /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4DE6760BBA0948938024421B /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0DB5F868AFA46108534BC84 /* noop-file.swift */; };
-		8CE83DCAFB0FE31AC99A90E8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 879E5497E68F2F4FEECF57CC /* PrivacyInfo.xcprivacy */; };
+		8140B9CB6AFE4FCF868271E5 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3EC9877A6D4358A86F6359 /* noop-file.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-pinpadclientmaplibre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-pinpadclientmaplibre.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -25,15 +25,15 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = pinpadclientmaplibre/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = pinpadclientmaplibre/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pinpadclientmaplibre/main.m; sourceTree = "<group>"; };
-		428FB9B05CEB447BAFF21AF2 /* pinpadclientmaplibre-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "pinpadclientmaplibre-Bridging-Header.h"; path = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h"; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-pinpadclientmaplibre.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pinpadclientmaplibre.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-pinpadclientmaplibre.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pinpadclientmaplibre.debug.xcconfig"; path = "Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-pinpadclientmaplibre.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pinpadclientmaplibre.release.xcconfig"; path = "Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre.release.xcconfig"; sourceTree = "<group>"; };
-		879E5497E68F2F4FEECF57CC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = pinpadclientmaplibre/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		870F8E0DD90C413AAA08E6A0 /* pinpadclientmaplibre-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "pinpadclientmaplibre-Bridging-Header.h"; path = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = pinpadclientmaplibre/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AD3EC9877A6D4358A86F6359 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "pinpadclientmaplibre/noop-file.swift"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F0DB5F868AFA46108534BC84 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "pinpadclientmaplibre/noop-file.swift"; sourceTree = "<group>"; };
+		F5B8457BA2E0AE89BFE2B67F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = pinpadclientmaplibre/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-pinpadclientmaplibre/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,9 +59,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				F0DB5F868AFA46108534BC84 /* noop-file.swift */,
-				428FB9B05CEB447BAFF21AF2 /* pinpadclientmaplibre-Bridging-Header.h */,
-				879E5497E68F2F4FEECF57CC /* PrivacyInfo.xcprivacy */,
+				AD3EC9877A6D4358A86F6359 /* noop-file.swift */,
+				870F8E0DD90C413AAA08E6A0 /* pinpadclientmaplibre-Bridging-Header.h */,
+				F5B8457BA2E0AE89BFE2B67F /* PrivacyInfo.xcprivacy */,
 			);
 			name = pinpadclientmaplibre;
 			sourceTree = "<group>";
@@ -91,7 +91,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				95BF75F6019A468AB5C32B1D /* Resources */,
+				F603EC7BF6F14016A08654BD /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -140,13 +140,13 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		95BF75F6019A468AB5C32B1D /* Resources */ = {
-			isa = "PBXGroup";
+		F603EC7BF6F14016A08654BD /* Resources */ = {
+			isa = PBXGroup;
 			children = (
 			);
 			name = Resources;
-			sourceTree = "<group>";
 			path = "";
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -156,18 +156,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "pinpadclientmaplibre" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				61ED74B13D7E567B108DF436 /* [Expo] Configure project */,
+				283333D4B32CA40CD1A16444 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				DA810B8D8F2A46C5A83C95FD /* Remove signature files (Xcode workaround) */,
-				D467983F06A8E10E8A22F94B /* [CP] Embed Pods Frameworks */,
-				BD86A669B9204324B9847F0A /* Remove signature files (Xcode workaround) */,
-				D5DB3F37BA9C419B9E69BB75 /* Remove signature files (Xcode workaround) */,
-				DE1AD24E96CB4405852F32D8 /* Remove signature files (Xcode workaround) */,
-				225D7E28AEDE454F872F4BDA /* Remove signature files (Xcode workaround) */,
+				DD13860539814C28BFDAAADB /* Remove signature files (Xcode workaround) */,
+				5D846B244EFD24D22661BEFF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -175,7 +171,7 @@
 			);
 			name = pinpadclientmaplibre;
 			packageProductDependencies = (
-				DDED8C770BE44D7201A63EAD /* MapLibre */,
+				D654A928A490E87CB10A3DD2 /* MapLibre */,
 			);
 			productName = pinpadclientmaplibre;
 			productReference = 13B07F961A680F5B00A75B9A /* pinpadclientmaplibre.app */;
@@ -204,7 +200,7 @@
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
-				BF937427BCB71568C5FE9F1E /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
+				5FD56B1023E52F4637418E81 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -223,7 +219,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				8CE83DCAFB0FE31AC99A90E8 /* PrivacyInfo.xcprivacy in Resources */,
+				3C69C7A6105B9CA1A660F063 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +263,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		61ED74B13D7E567B108DF436 /* [Expo] Configure project */ = {
+		283333D4B32CA40CD1A16444 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -285,6 +281,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-pinpadclientmaplibre/expo-configure-project.sh\"\n";
+		};
+		5D846B244EFD24D22661BEFF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -324,7 +338,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BD86A669B9204324B9847F0A /* Remove signature files (Xcode workaround) */ = {
+		DD13860539814C28BFDAAADB /* Remove signature files (Xcode workaround) */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -337,86 +351,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
-		};
-		D467983F06A8E10E8A22F94B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-pinpadclientmaplibre/Pods-pinpadclientmaplibre-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D5DB3F37BA9C419B9E69BB75 /* Remove signature files (Xcode workaround) */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Remove signature files (Xcode workaround)";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
-		};
-		DA810B8D8F2A46C5A83C95FD /* Remove signature files (Xcode workaround) */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Remove signature files (Xcode workaround)";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n    echo \"Remove signature files (Xcode workaround)\";\n    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";\n  ";
-		};
-		DE1AD24E96CB4405852F32D8 /* Remove signature files (Xcode workaround) */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			name = "Remove signature files (Xcode workaround)";
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			shellPath = /bin/sh;
-			shellScript = "
-    echo \"Remove signature files (Xcode workaround)\";
-    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";
-  ";
-		};
-		225D7E28AEDE454F872F4BDA /* Remove signature files (Xcode workaround) */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			name = "Remove signature files (Xcode workaround)";
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			shellPath = /bin/sh;
-			shellScript = "
-    echo \"Remove signature files (Xcode workaround)\";
-    rm -rf \"$CONFIGURATION_BUILD_DIR/MapLibre.xcframework-ios.signature\";
-  ";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -428,7 +362,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				4DE6760BBA0948938024421B /* noop-file.swift in Sources */,
+				8140B9CB6AFE4FCF868271E5 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,7 +393,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.pinpadclientmaplibre;
-				PRODUCT_NAME = "pinpadclientmaplibre";
+				PRODUCT_NAME = pinpadclientmaplibre;
 				SWIFT_OBJC_BRIDGING_HEADER = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -476,7 +410,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pinpadclientmaplibre/pinpadclientmaplibre.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = pinpadclientmaplibre/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -488,7 +422,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.pinpadclientmaplibre;
-				PRODUCT_NAME = "pinpadclientmaplibre";
+				PRODUCT_NAME = pinpadclientmaplibre;
 				SWIFT_OBJC_BRIDGING_HEADER = "pinpadclientmaplibre/pinpadclientmaplibre-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -638,7 +572,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		BF937427BCB71568C5FE9F1E /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
+		5FD56B1023E52F4637418E81 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution";
 			requirement = {
@@ -649,9 +583,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DDED8C770BE44D7201A63EAD /* MapLibre */ = {
+		D654A928A490E87CB10A3DD2 /* MapLibre */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = BF937427BCB71568C5FE9F1E /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			package = 5FD56B1023E52F4637418E81 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
 			productName = MapLibre;
 		};
 /* End XCSwiftPackageProductDependency section */

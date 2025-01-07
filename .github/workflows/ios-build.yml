@@ -1,10 +1,12 @@
-name: iOS Build and Test
+name: iOS Build and Render Test
 
 on:
   push:
 
 jobs:
   build:
+    # TODO: Re-enable once there are more run minutes available
+    if: false 
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -16,51 +18,18 @@ jobs:
           node-version: 18
           cache: 'yarn'
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
       - name: Install dependencies
-        run: yarn install
+        run: |
+          npm install -g yarn
+          yarn install
 
       - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Build iOS app
-        run: |
-          yarn expo prebuild --platform ios --clean
-          cd ios
-          pod install
-          cd ..
-          yarn generate-test-data
-          cd ios
-          
-          SDK_VERSION=$(xcodebuild -showsdks | grep 'Simulator - iOS' | grep -o 'iphonesimulator[0-9.]*' | head -1)
-          OS_VERSION=$(echo $SDK_VERSION | grep -o '[0-9.]*')
-          
-          xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
-            -scheme pinpadclientmaplibre \
-            -configuration Debug \
-            -sdk $SDK_VERSION \
-            -destination "platform=iOS Simulator,OS=$OS_VERSION,name=iPhone 15" \
-            -derivedDataPath build \
-            build
-  
-      - name: Run Tests
-        run: |
-          # Boot the simulator
-          SIMULATOR_UDID=$(xcrun simctl create "iPhone 15" "iPhone 15" "iOS$OS_VERSION")
-          xcrun simctl boot "$SIMULATOR_UDID"
-          
-          # Install the app
-          xcrun simctl install "$SIMULATOR_UDID" "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
-          
-          # Start Expo server and run tests
-          yarn expo start & 
-          sleep 15
-          maestro test tests/*.yaml
-          
-          # Clean up
-          xcrun simctl shutdown "$SIMULATOR_UDID"
-          xcrun simctl delete "$SIMULATOR_UDID"
+      - name: Run iOS Build and Tests
+        env:
+          # According to the official GH Runner images repo, this simulator is available on this runner
+          SIMULATOR_DEVICE: "iPhone 15"
+        run: bash tests/test-ios.sh

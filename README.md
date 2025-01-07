@@ -80,8 +80,9 @@ To run the tests, you can use the following commands:
 
 ```
 yarn test:maestro:ios
+yarn test:maestro:android
 ```
 
-This will boot the simulator and run the tests. Currently, iPhone XR is used. You can change this in the `package.json` file if you want to use a different simulator.
+This will boot the simulator and run the tests. Currently, iPhone XR is used by default. You can change this in the shell script file if you want to use a different simulator.
 
 

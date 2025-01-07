@@ -1,2 +1,45 @@
-# TODO: Re-enable this workflow
-# Disabled to save on CI credits
+name: Android Build & Render Test
+
+on:
+  push:
+
+jobs:
+  build:
+    # TODO: Re-enable once there are more run minutes available
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393"   
+
+      - name: Install dependencies
+        run: |
+          npm install -g yarn
+          yarn install
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Run Android Build and Tests
+        run: bash tests/test-android.sh
