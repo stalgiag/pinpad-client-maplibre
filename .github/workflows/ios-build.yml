@@ -51,7 +51,11 @@ jobs:
           # Boot simulator
           xcrun simctl boot 'iPhone 15'
           
-          # Install the app
+          # Debug: List build directory contents
+          echo "Checking build directory contents:"
+          ls -R ios/build/Build/Products/
+          
+          # Install the app (using the correct path from the debug output)
           xcrun simctl install 'iPhone 15' "ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app"
           
           # Start Expo in the background
