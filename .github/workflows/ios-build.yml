@@ -1,4 +1,4 @@
-name: iOS Build
+name: iOS Build and Render
 
 on:
   push:
@@ -43,3 +43,20 @@ jobs:
             -sdk $SDK_VERSION \
             -destination "platform=iOS Simulator,OS=$OS_VERSION,name=iPhone 15" \
             build
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+  
+      - name: Start Expo server and run Maestro tests
+        run: |
+          # Start Expo in the background
+          yarn expo start & 
+          # Wait for Metro to be ready
+          sleep 15
+          # Boot simulator if needed and run tests
+          xcrun simctl list | grep -q 'Booted' || xcrun simctl boot 'iPhone 15'
+          yarn test:maestro
+        env:
+          CI: true

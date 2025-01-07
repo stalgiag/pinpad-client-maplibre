@@ -27,6 +27,7 @@ export default function App() {
       <MapLibreGL.MapView
         style={styles.map}
         styleURL={tileManager.getStyleUrl()}
+        testID="map-view"
       >
         <MapLibreGL.Camera
           zoomLevel={9}

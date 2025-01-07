@@ -66,3 +66,22 @@ For Android you need to launch a simulator first. Then
 yarn android
 ``` 
 should detect it and run your code there.
+
+## Testing
+
+We have two testing frameworks:
+
+- [Jest](https://jestjs.io/) for unit testing.
+- [Maestro](https://maestro.mobile.dev/) for UI testing.
+
+We currently only have a single test for the map view using Maestro. To run Maestro, you will need to install it. Instructions can be found [here](https://maestro.mobile.dev/docs/getting-started/installation).
+
+To run the tests, you can use the following commands:
+
+```
+yarn test:maestro:ios
+```
+
+This will boot the simulator and run the tests. Currently, iPhone XR is used. You can change this in the `package.json` file if you want to use a different simulator.
+
+

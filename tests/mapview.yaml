@@ -1,0 +1,11 @@
+appId: com.anonymous.pinpadclientmaplibre
+---
+- launchApp
+- assertVisible:
+    id: "map-view"
+- waitForAnimationToEnd
+- retry:
+    maxRetries: 3
+    commands:
+      - assertVisible:
+          id: "map-view"
