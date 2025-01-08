@@ -57,9 +57,6 @@ jobs:
         # Verify KVM installation
         kvm-ok || exit 1
         virsh list --all
-        
-        # Set CPU governor to performance
-        echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
@@ -103,9 +100,13 @@ jobs:
           "emulator"
 
     - name: Run Android tests
-      run: bash ./tests/test-android.sh
       env:
         CI: true
+        QEMU_AUDIO_DRV: "none"
+        QEMU_CPU_COUNT: "2"
+        QEMU_RAM_SIZE: "4096"
+        ANDROID_EMULATOR_USE_SYSTEM_LIBS: "1"
+      run: bash ./tests/test-android.sh
 
     - name: Upload test artifacts
       if: always()
