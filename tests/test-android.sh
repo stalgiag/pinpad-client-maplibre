@@ -39,9 +39,21 @@ if ! adb devices | grep -q "emulator-"; then
     echo "No emulator running. Starting new emulator..."
     
     if [ "$CI" = "true" ]; then
-        log_subsection "Creating AVD for CI environment..."
-        echo "no" | avdmanager create avd -n test_avd --package "system-images;android-33;google_apis;x86_64" --device "pixel_6"
-        $ANDROID_HOME/emulator/emulator -avd test_avd -no-window -no-audio -no-boot-anim &
+        log_subsection "Checking available AVDs..."
+        AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | head -n 1)
+        echo "AVD_NAME: $AVD_NAME"
+        
+        if [ -z "$AVD_NAME" ]; then
+            log_subsection "No AVD found. Creating new AVD..."
+            echo "no" | avdmanager create avd -n "test_avd" \
+                --package "system-images;android-33;google_apis;x86_64" \
+                --device "pixel_6" \
+                --force
+            AVD_NAME="test_avd"
+        fi
+        
+        log_subsection "Starting emulator with AVD: $AVD_NAME"
+        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" -no-window -no-audio -no-boot-anim &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
     fi
