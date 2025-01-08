@@ -46,14 +46,19 @@ if ! adb devices | grep -q "emulator-"; then
         if [ -z "$AVD_NAME" ]; then
             log_subsection "No AVD found. Creating new AVD..."
             echo "no" | avdmanager create avd -n "test_avd" \
-                --package "system-images;android-33;google_apis;x86_64" \
+                --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
                 --force
             AVD_NAME="test_avd"
         fi
         
         log_subsection "Starting emulator with AVD: $AVD_NAME"
-        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" -no-window -no-audio -no-boot-anim &
+        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -accel on \
+            -gpu swiftshader_indirect &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
     fi
@@ -93,7 +98,6 @@ ls -la android/app/build/outputs/apk/debug/
 
 APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
 
-# Check if APK exists
 if [ ! -f "$APK_PATH" ]; then
     echo "❌ Error: APK not found at $APK_PATH"
     echo "Available files in build directory:"

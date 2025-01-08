@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Android build tools and platform
         run: |
-          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" "system-images;android-33;google_apis;x86_64"
+          sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393" "system-images;android-34;google_apis;x86_64"
           sdkmanager --licenses
 
       - name: Run Android Build and Tests
