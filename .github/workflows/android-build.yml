@@ -18,15 +18,25 @@ jobs:
 
     - name: Configure system resources
       run: |
+        # File system and memory settings
         echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+        echo "vm.swappiness=0" | sudo tee -a /etc/sysctl.conf
+        echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
+        echo "vm.overcommit_memory=1" | sudo tee -a /etc/sysctl.conf
+        
+        # Apply all settings
         sudo sysctl -p
-        echo "memory.swappiness=0" | sudo tee -a /etc/sysctl.conf
-        sudo sysctl -p
+        
         # Disable unnecessary services
         sudo service mysql stop || true
         sudo service postgresql stop || true
         sudo service redis-server stop || true
         sudo service docker stop || true
+        
+        # Verify settings
+        sysctl vm.swappiness
+        sysctl fs.inotify.max_user_watches
+        sysctl vm.max_map_count
 
     - name: Setup KVM with enhanced permissions
       run: |
