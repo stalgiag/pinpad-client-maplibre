@@ -54,10 +54,12 @@ if ! adb devices | grep -q "emulator-"; then
             echo "no" | avdmanager --verbose create avd -n "test_avd" \
                 --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
-                --force \
-                --property hw.ramSize=2048 \
-                --property hw.gpu.enabled=yes \
-                --property hw.gpu.mode=swiftshader_indirect
+                --force
+
+            CONFIG_PATH="$ANDROID_AVD_HOME/test_avd.avd/config.ini"
+            echo "hw.ramSize=2048" >> "$CONFIG_PATH"
+            echo "hw.gpu.enabled=yes" >> "$CONFIG_PATH"
+            echo "hw.gpu.mode=swiftshader_indirect" >> "$CONFIG_PATH"
 
             for i in {1..5}; do
                 AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
