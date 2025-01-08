@@ -40,8 +40,10 @@ if ! adb devices | grep -q "emulator-"; then
     
     if [ "$CI" = "true" ]; then
         log_subsection "Setting up AVD environment..."
-        # Create necessary directories
-        mkdir -p $HOME/.android/avd
+        export ANDROID_SDK_HOME=$HOME/.android
+        export ANDROID_AVD_HOME=$HOME/.android/avd
+        
+        mkdir -p $ANDROID_AVD_HOME
         
         log_subsection "Checking available AVDs..."
         AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | head -n 1)
@@ -63,7 +65,7 @@ if ! adb devices | grep -q "emulator-"; then
                 fi
                 echo "Waiting for AVD to be available... (attempt $i)"
                 echo "Current AVD directory contents:"
-                ls -la $HOME/.android/avd || true
+                ls -la $ANDROID_AVD_HOME || true
                 sleep 5
             done
 
@@ -74,7 +76,7 @@ if ! adb devices | grep -q "emulator-"; then
                 echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
                 echo "ANDROID_HOME: $ANDROID_HOME"
                 echo "Contents of Android directories:"
-                ls -la $HOME/.android || true
+                ls -la $ANDROID_SDK_HOME || true
                 ls -la $ANDROID_HOME/emulator || true
                 exit 1
             fi
