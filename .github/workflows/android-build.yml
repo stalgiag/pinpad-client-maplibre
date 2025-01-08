@@ -85,7 +85,8 @@ jobs:
     - name: Install dependencies
       run: |
         yarn install --frozen-lockfile
-        npm install -g @maestro-framework/cli
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
     - name: Accept Android SDK licenses
       run: yes | sdkmanager --licenses
