@@ -49,7 +49,25 @@ if ! adb devices | grep -q "emulator-"; then
                 --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
                 --force
-            AVD_NAME="test_avd"
+
+            # Verify AVD creation
+            for i in {1..5}; do
+                AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
+                if [ ! -z "$AVD_NAME" ]; then
+                    echo "✅ AVD created successfully"
+                    break
+                fi
+                echo "Waiting for AVD to be available... (attempt $i)"
+                sleep 5
+            done
+
+            if [ -z "$AVD_NAME" ]; then
+                echo "❌ Failed to create AVD"
+                echo "Contents of AVD directories:"
+                ls -la $ANDROID_AVD_HOME || true
+                ls -la $HOME/.android/avd || true
+                exit 1
+            fi
         fi
         
         log_subsection "Starting emulator with AVD: $AVD_NAME"
