@@ -54,9 +54,11 @@ if ! adb devices | grep -q "emulator-"; then
             echo "no" | avdmanager --verbose create avd -n "test_avd" \
                 --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
-                --force
+                --force \
+                --property hw.ramSize=2048 \
+                --property hw.gpu.enabled=yes \
+                --property hw.gpu.mode=swiftshader_indirect
 
-            # Verify AVD creation
             for i in {1..5}; do
                 AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
                 if [ ! -z "$AVD_NAME" ]; then
@@ -97,6 +99,9 @@ if ! adb devices | grep -q "emulator-"; then
             -no-boot-anim \
             -accel on \
             -gpu swiftshader_indirect \
+            -memory 2048 \
+            -no-snapshot \
+            -screen no-touch \
             -qemu -enable-kvm &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
@@ -152,7 +157,7 @@ yarn expo start &
 EXPO_PID=$!
 
 log_subsection "Waiting for Expo server to be ready..."
-for i in {1..30}; do
+for i in {1..60}; do
     if curl -s http://localhost:8081/status | grep -q "packager-status:running"; then
         echo "✅ Expo server is ready"
         break
@@ -162,7 +167,7 @@ for i in {1..30}; do
 done
 
 log_subsection "Waiting for app to initialize..."
-sleep 30
+sleep 60
 
 log_subsection "Running Maestro tests..."
 maestro test ./tests/*.yaml
