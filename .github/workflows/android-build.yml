@@ -39,5 +39,10 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" "system-images;android-33;google_apis;x86_64"
+          sdkmanager --licenses
+
       - name: Run Android Build and Tests
         run: bash tests/test-android.sh
