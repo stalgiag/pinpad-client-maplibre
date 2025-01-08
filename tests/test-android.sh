@@ -113,6 +113,9 @@ else
 fi
 
 log_section "Building Application"
+log_subsection "Generating test data..."
+yarn generate-test-data
+
 log_subsection "Running prebuild..."
 yarn expo prebuild --platform android --clean
 
@@ -120,9 +123,6 @@ log_subsection "Cleaning Android project..."
 cd android
 ./gradlew clean
 cd ..
-
-log_subsection "Generating test data..."
-yarn generate-test-data
 
 log_subsection "Building APK..."
 cd android
