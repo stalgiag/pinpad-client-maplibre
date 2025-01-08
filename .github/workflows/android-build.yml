@@ -66,3 +66,12 @@ jobs:
             ~/.maestro/tests/
             /home/runner/.maestro/tests/
             /home/runner/.maestro/logs/
+        env:
+          GITHUB_STEP_SUMMARY: |
+            ## 📊 Test Artifacts Available
+            The test artifacts have been uploaded and can be downloaded from the workflow summary.
+            
+            ### 📁 Included artifacts:
+            - Maestro test results
+            - Test execution logs
+            - Screenshots and recordings
