@@ -56,3 +56,13 @@ jobs:
 
       - name: Run Android Build and Tests
         run: bash tests/test-android.sh
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts
+          path: |
+            ~/.maestro/tests/
+            /home/runner/.maestro/tests/
+            /home/runner/.maestro/logs/

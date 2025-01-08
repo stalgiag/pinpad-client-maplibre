@@ -150,7 +150,19 @@ adb install "$APK_PATH"
 log_subsection "Starting Expo server..."
 yarn expo start &
 EXPO_PID=$!
-sleep 5
+
+log_subsection "Waiting for Expo server to be ready..."
+for i in {1..30}; do
+    if curl -s http://localhost:8081/status | grep -q "packager-status:running"; then
+        echo "✅ Expo server is ready"
+        break
+    fi
+    echo "Waiting for Expo server... (attempt $i)"
+    sleep 2
+done
+
+log_subsection "Waiting for app to initialize..."
+sleep 30
 
 log_subsection "Running Maestro tests..."
 maestro test ./tests/*.yaml
