@@ -1,0 +1,48 @@
+name: Android Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393"   
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate test data
+        run: |
+          sudo apt-get install -y zip
+          yarn generate-test-data
+
+      - name: Test build setup
+        run: |
+          yarn expo prebuild --platform android --clean
+          cd android
+          ./gradlew assembleDebug
