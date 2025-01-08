@@ -34,6 +34,20 @@ else
 fi
 
 log_section "Emulator Setup"
+log_subsection "Setting up hardware acceleration..."
+# Add hardware acceleration check
+if [ "$CI" = "true" ]; then
+    if ! grep -q "^flags.*\bvmx\b" /proc/cpuinfo; then
+        echo "❌ CPU does not support hardware virtualization"
+        exit 1
+    fi
+fi
+
+# Start logging
+mkdir -p logs
+adb logcat > logs/emulator.log &
+LOGCAT_PID=$!
+
 log_subsection "Checking if emulator is running..."
 if ! adb devices | grep -q "emulator-"; then
     echo "No emulator running. Starting new emulator..."
@@ -52,14 +66,35 @@ if ! adb devices | grep -q "emulator-"; then
         if [ -z "$AVD_NAME" ]; then
             log_subsection "No AVD found. Creating new AVD..."
             echo "no" | avdmanager --verbose create avd -n "test_avd" \
-                --package "system-images;android-34;google_apis;x86_64" \
+                --package "system-images;android-33;google_apis;x86_64" \
                 --device "pixel_6" \
                 --force
 
+            log_subsection "Creating optimized AVD configuration..."
             CONFIG_PATH="$ANDROID_AVD_HOME/test_avd.avd/config.ini"
-            echo "hw.ramSize=2048" >> "$CONFIG_PATH"
-            echo "hw.gpu.enabled=yes" >> "$CONFIG_PATH"
-            echo "hw.gpu.mode=swiftshader_indirect" >> "$CONFIG_PATH"
+            # Enhanced emulator settings for stability
+            cat >> "$CONFIG_PATH" << EOF
+hw.ramSize=4096
+hw.gpu.enabled=yes
+hw.gpu.mode=swiftshader_indirect
+hw.cpu.ncore=2
+disk.dataPartition.size=6442450944
+hw.lcd.density=440
+hw.keyboard=yes
+hw.mainKeys=no
+hw.accelerometer=yes
+hw.camera.back=none
+hw.camera.front=none
+hw.gps=no
+hw.battery=yes
+vm.heapSize=576
+dalvik.vm.heapsize=576m
+disk.dataPartition.size=2048M
+hw.sensors.proximity=no
+hw.sensors.magnetic_field=no
+hw.audioInput=no
+hw.audioOutput=no
+EOF
 
             for i in {1..5}; do
                 AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
@@ -76,9 +111,7 @@ if ! adb devices | grep -q "emulator-"; then
             if [ -z "$AVD_NAME" ]; then
                 echo "❌ Failed to create AVD"
                 echo "Environment variables:"
-                echo "ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
-                echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
-                echo "ANDROID_HOME: $ANDROID_HOME"
+                env | grep ANDROID
                 echo "Contents of Android directories:"
                 ls -la $ANDROID_SDK_HOME || true
                 ls -la $ANDROID_HOME/emulator || true
@@ -86,24 +119,21 @@ if ! adb devices | grep -q "emulator-"; then
             fi
         fi
         
-        log_subsection "Starting emulator with AVD: $AVD_NAME"
-        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
-            echo "❌ KVM permissions not properly set"
-            ls -la /dev/kvm
-            groups
-            exit 1
-        fi
-        
-        echo "✅ KVM permissions verified"
+        log_subsection "Starting emulator with optimized parameters..."
+        export QEMU_AUDIO_DRV=none
         $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
             -no-window \
             -no-audio \
             -no-boot-anim \
             -accel on \
             -gpu swiftshader_indirect \
-            -memory 2048 \
+            -memory 4096 \
+            -cores 2 \
             -no-snapshot \
             -screen no-touch \
+            -no-cache \
+            -wipe-data \
+            -debug-init \
             -qemu -enable-kvm &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
@@ -111,22 +141,78 @@ if ! adb devices | grep -q "emulator-"; then
     
     EMULATOR_PID=$!
     
-    log_subsection "Waiting for emulator to boot..."    
-    adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
-    
+    log_subsection "Enhanced emulator boot checks..."
+    # Add more robust boot checking
+    BOOT_TIMEOUT=360
+    BOOT_START_TIME=$(date +%s)
+    while true; do
+        if adb shell getprop sys.boot_completed 2>&1 | grep -q "1"; then
+            echo "✅ System boot completed"
+            break
+        fi
+        
+        CURRENT_TIME=$(date +%s)
+        ELAPSED_TIME=$((CURRENT_TIME - BOOT_START_TIME))
+        
+        if [ $ELAPSED_TIME -gt $BOOT_TIMEOUT ]; then
+            echo "❌ Emulator boot timeout after ${BOOT_TIMEOUT} seconds"
+            echo "Dumping system logs..."
+            adb logcat -d > logs/emulator_boot_failure.log
+            adb shell dumpsys > logs/system_dump.txt
+            exit 1
+        fi
+        
+        echo "Waiting for system boot... (${ELAPSED_TIME}s)"
+        sleep 5
+    done
+
+    # System stability configuration
+    log_subsection "Configuring system settings..."
     adb shell settings put global window_animation_scale 0
     adb shell settings put global transition_animation_scale 0
     adb shell settings put global animator_duration_scale 0
     adb shell settings put system screen_off_timeout 1800000
     
-    sleep 60
+    # Additional stability settings
+    adb shell svc power stayon true
+    adb shell settings put global development_settings_enabled 1
+    adb shell settings put global stay_on_while_plugged_in 3
+    
+    # Memory optimization
+    adb shell settings put global cached_apps_freezer enabled
+    adb shell settings put global always_finish_activities 1
 
+    # SystemUI monitoring function
+    monitor_systemui() {
+        while true; do
+            if ! adb shell pidof com.android.systemui >/dev/null; then
+                echo "SystemUI process died, restarting..."
+                adb shell stop
+                sleep 2
+                adb shell start
+                sleep 5
+                adb shell am start -n com.android.systemui/.SystemUIService
+            fi
+            sleep 5
+        done
+    }
+
+    # Start SystemUI monitoring in background
+    monitor_systemui &
+    MONITOR_PID=$!
+
+    # Additional boot stabilization delay
+    sleep 30
+
+    # Verify system stability
     if ! adb shell input keyevent KEYCODE_WAKEUP; then
         echo "❌ System UI might be unresponsive, attempting recovery..."
+        adb shell dumpsys > logs/pre_recovery_dump.txt
         adb shell pkill -f com.android.systemui
         sleep 5
         adb shell am start -n com.android.systemui/.SystemUIService
         sleep 30
+        adb shell dumpsys > logs/post_recovery_dump.txt
     fi
 else
     echo "Using already running emulator..."
@@ -183,7 +269,7 @@ for i in {1..60}; do
 done
 
 log_subsection "Waiting for app to initialize..."
-sleep 60
+sleep 30
 
 log_subsection "Running Maestro tests..."
 maestro test ./tests/*.yaml
@@ -192,16 +278,24 @@ TEST_RESULT=$?
 log_section "Cleanup"
 log_subsection "Cleaning up processes..."
 kill $EXPO_PID 2>/dev/null || true
+kill $LOGCAT_PID 2>/dev/null || true
+kill $MONITOR_PID 2>/dev/null || true
 
 if [ ! -z "$EMULATOR_PID" ]; then
     log_subsection "Shutting down emulator..."
+    adb emu kill || true
     kill $EMULATOR_PID 2>/dev/null || true
 fi
 
-if [ $TEST_RESULT -eq 0 ]; then
-    log_section "✅ Tests completed successfully"
+# Save logs on failure
+if [ $TEST_RESULT -ne 0 ]; then
+    log_section "❌ Tests failed - saving logs"
+    mkdir -p test-artifacts
+    cp logs/* test-artifacts/
+    adb logcat -d > test-artifacts/final_logcat.log
+    adb shell dumpsys > test-artifacts/final_dumpsys.txt
 else
-    log_section "❌ Tests failed"
+    log_section "✅ Tests completed successfully"
 fi
 
 exit $TEST_RESULT

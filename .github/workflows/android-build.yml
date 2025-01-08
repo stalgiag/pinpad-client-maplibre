@@ -1,77 +1,111 @@
-name: Android Build & Render Test
+name: Android Build & Test
 
 on:
   push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      JAVA_OPTS: "-Xmx4g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g"
+      NODE_OPTIONS: "--max_old_space_size=4096"
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'yarn'
+    - name: Configure system resources
+      run: |
+        echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+        sudo sysctl -p
+        echo "memory.swappiness=0" | sudo tee -a /etc/sysctl.conf
+        sudo sysctl -p
+        # Disable unnecessary services
+        sudo service mysql stop || true
+        sudo service postgresql stop || true
+        sudo service redis-server stop || true
+        sudo service docker stop || true
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Setup KVM with enhanced permissions
+      run: |
+        echo "Installing and configuring KVM"
+        sudo apt-get update
+        sudo apt-get --quiet install --yes \
+          qemu-kvm \
+          libvirt-daemon-system \
+          libvirt-clients \
+          bridge-utils \
+          cpu-checker
+        
+        sudo adduser $USER kvm
+        sudo adduser $USER libvirt
+        sudo chown root:kvm /dev/kvm
+        sudo chmod 660 /dev/kvm
+        
+        # Verify KVM installation
+        kvm-ok || exit 1
+        virsh list --all
+        
+        # Set CPU governor to performance
+        echo "performance" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
 
-      - name: Install Android build tools and platform
-        run: |
-          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393"   
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
 
-      - name: Install dependencies
-        run: |
-          npm install -g yarn
-          yarn install
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
 
-      - name: Install Maestro
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+    - name: Cache Android SDK
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-cache-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}
 
-      - name: Install Android build tools and platform
-        run: |
-          sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393" "system-images;android-34;google_apis;x86_64"
-          sdkmanager --licenses
+    - name: Install dependencies
+      run: |
+        yarn install --frozen-lockfile
+        npm install -g @maestro-framework/cli
 
-      - name: Enable KVM
-        run: |
-          echo "Installing KVM"
-          sudo apt-get update
-          sudo apt-get --quiet install --yes qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
-          sudo adduser $USER kvm
-          sudo chown $USER /dev/kvm
-          sudo chmod o+rw /dev/kvm
-          groups $USER
+    - name: Accept Android SDK licenses
+      run: yes | sdkmanager --licenses
 
-      - name: Run Android Build and Tests
-        run: bash tests/test-android.sh
+    - name: Install Android SDK components
+      run: |
+        sdkmanager --install \
+          "platform-tools" \
+          "platforms;android-33" \
+          "build-tools;33.0.0" \
+          "system-images;android-33;google_apis;x86_64" \
+          "emulator"
 
-      - name: Upload Maestro artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: maestro-artifacts
-          path: |
-            ~/.maestro/tests/
-            /home/runner/.maestro/tests/
-            /home/runner/.maestro/logs/
-        env:
-          GITHUB_STEP_SUMMARY: |
-            ## 📊 Test Artifacts Available
-            The test artifacts have been uploaded and can be downloaded from the workflow summary.
-            
-            ### 📁 Included artifacts:
-            - Maestro test results
-            - Test execution logs
-            - Screenshots and recordings
+    - name: Run Android tests
+      run: bash ./tests/test-android.sh
+      env:
+        CI: true
+
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-artifacts
+        path: |
+          test-artifacts/
+          logs/
+        retention-days: 3
