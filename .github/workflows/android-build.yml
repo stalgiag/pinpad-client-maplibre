@@ -5,6 +5,8 @@ on:
 
 jobs:
   build:
+    # TODO: Re-enable once there are more run minutes available
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

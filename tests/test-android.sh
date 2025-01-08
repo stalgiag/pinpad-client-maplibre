@@ -111,9 +111,23 @@ if ! adb devices | grep -q "emulator-"; then
     
     EMULATOR_PID=$!
     
-    log_subsection "Waiting for emulator to boot..."
-    adb wait-for-device
-    sleep 30
+    log_subsection "Waiting for emulator to boot..."    
+    adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
+    
+    adb shell settings put global window_animation_scale 0
+    adb shell settings put global transition_animation_scale 0
+    adb shell settings put global animator_duration_scale 0
+    adb shell settings put system screen_off_timeout 1800000
+    
+    sleep 60
+
+    if ! adb shell input keyevent KEYCODE_WAKEUP; then
+        echo "❌ System UI might be unresponsive, attempting recovery..."
+        adb shell pkill -f com.android.systemui
+        sleep 5
+        adb shell am start -n com.android.systemui/.SystemUIService
+        sleep 30
+    fi
 else
     echo "Using already running emulator..."
     EMULATOR_PID=""
