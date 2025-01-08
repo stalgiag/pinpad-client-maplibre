@@ -39,13 +39,17 @@ if ! adb devices | grep -q "emulator-"; then
     echo "No emulator running. Starting new emulator..."
     
     if [ "$CI" = "true" ]; then
+        log_subsection "Setting up AVD environment..."
+        # Create necessary directories
+        mkdir -p $HOME/.android/avd
+        
         log_subsection "Checking available AVDs..."
         AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | head -n 1)
         echo "AVD_NAME: $AVD_NAME"
         
         if [ -z "$AVD_NAME" ]; then
             log_subsection "No AVD found. Creating new AVD..."
-            echo "no" | avdmanager create avd -n "test_avd" \
+            echo "no" | avdmanager --verbose create avd -n "test_avd" \
                 --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
                 --force
@@ -58,14 +62,20 @@ if ! adb devices | grep -q "emulator-"; then
                     break
                 fi
                 echo "Waiting for AVD to be available... (attempt $i)"
+                echo "Current AVD directory contents:"
+                ls -la $HOME/.android/avd || true
                 sleep 5
             done
 
             if [ -z "$AVD_NAME" ]; then
                 echo "❌ Failed to create AVD"
-                echo "Contents of AVD directories:"
-                ls -la $ANDROID_AVD_HOME || true
-                ls -la $HOME/.android/avd || true
+                echo "Environment variables:"
+                echo "ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
+                echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
+                echo "ANDROID_HOME: $ANDROID_HOME"
+                echo "Contents of Android directories:"
+                ls -la $HOME/.android || true
+                ls -la $ANDROID_HOME/emulator || true
                 exit 1
             fi
         fi
