@@ -83,12 +83,21 @@ if ! adb devices | grep -q "emulator-"; then
         fi
         
         log_subsection "Starting emulator with AVD: $AVD_NAME"
+        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
+            echo "❌ KVM permissions not properly set"
+            ls -la /dev/kvm
+            groups
+            exit 1
+        fi
+        
+        echo "✅ KVM permissions verified"
         $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
             -no-window \
             -no-audio \
             -no-boot-anim \
             -accel on \
-            -gpu swiftshader_indirect &
+            -gpu swiftshader_indirect \
+            -qemu -enable-kvm &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
     fi

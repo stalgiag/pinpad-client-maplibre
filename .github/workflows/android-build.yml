@@ -44,5 +44,15 @@ jobs:
           sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393" "system-images;android-34;google_apis;x86_64"
           sdkmanager --licenses
 
+      - name: Enable KVM
+        run: |
+          echo "Installing KVM"
+          sudo apt-get update
+          sudo apt-get --quiet install --yes qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+          sudo adduser $USER kvm
+          sudo chown $USER /dev/kvm
+          sudo chmod o+rw /dev/kvm
+          groups $USER
+
       - name: Run Android Build and Tests
         run: bash tests/test-android.sh
