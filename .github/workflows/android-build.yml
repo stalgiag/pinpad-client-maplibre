@@ -12,6 +12,8 @@ jobs:
       JAVA_OPTS: "-Xmx4g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g"
       NODE_OPTIONS: "--max_old_space_size=4096"
+      ANDROID_EMULATOR_USE_SYSTEM_LIBS: "1"
+      ANDROID_EMU_GO_FASTER: "1"
 
     steps:
     - uses: actions/checkout@v3
@@ -91,8 +93,19 @@ jobs:
     - name: Accept Android SDK licenses
       run: yes | sdkmanager --licenses
 
-    - name: Install Android SDK components
+    - name: Setup Android SDK and Emulator
       run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libpulse0 \
+          libgl1 \
+          libxcursor1 \
+          libxdamage1 \
+          libxrandr2 \
+          libasound2 \
+          libgtk-3-0 \
+          libglu1-mesa
+
         sdkmanager --install \
           "platform-tools" \
           "platforms;android-33" \

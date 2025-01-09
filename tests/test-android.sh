@@ -36,10 +36,15 @@ fi
 log_section "Emulator Setup"
 log_subsection "Setting up hardware acceleration..."
 # Add hardware acceleration check
+log_subsection "Setting up hardware acceleration..."
+# Add hardware acceleration check with fallback
 if [ "$CI" = "true" ]; then
-    if ! grep -q "^flags.*\bvmx\b" /proc/cpuinfo; then
-        echo "❌ CPU does not support hardware virtualization"
-        exit 1
+    if grep -q "^flags.*\bvmx\b\|^flags.*\bvme\b" /proc/cpuinfo; then
+        echo "✅ Hardware virtualization supported"
+        ACCEL_TYPE="on"
+    else
+        echo "⚠️ Hardware virtualization not available, falling back to software acceleration"
+        ACCEL_TYPE="off"
     fi
 fi
 
@@ -89,11 +94,9 @@ hw.gps=no
 hw.battery=yes
 vm.heapSize=576
 dalvik.vm.heapsize=576m
-disk.dataPartition.size=2048M
-hw.sensors.proximity=no
-hw.sensors.magnetic_field=no
-hw.audioInput=no
-hw.audioOutput=no
+hw.gpu.blacklisted=no
+hw.gpu.enablehost=no
+hw.gpu.maxTextureSize=2048
 EOF
 
             for i in {1..5}; do
@@ -125,7 +128,7 @@ EOF
             -no-window \
             -no-audio \
             -no-boot-anim \
-            -accel on \
+            -accel $ACCEL_TYPE \
             -gpu swiftshader_indirect \
             -memory 4096 \
             -cores 2 \
