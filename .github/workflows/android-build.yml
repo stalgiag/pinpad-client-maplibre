@@ -1,4 +1,4 @@
-name: Android Build & Test
+name: Android Build & Render Test
 
 on:
   push:
@@ -6,44 +6,75 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-
-    env:
-      JAVA_OPTS: "-Xmx4g"
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g"
-
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'yarn'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Accept Android SDK licenses
-      run: yes | sdkmanager --licenses
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393"   
 
-    - name: Install Android SDK components
-      run: |
-        sdkmanager --install \
-          "platform-tools" \
-          "platforms;android-33" \
-          "build-tools;33.0.0" \
-          "system-images;android-33;google_apis;x86_64" \
-          "emulator"
+      - name: Install dependencies
+        run: |
+          npm install -g yarn
+          yarn install
 
-    - name: Run Android tests
-      run: bash ./tests/test-android.sh
-      env:
-        CI: true
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" "system-images;android-33;google_apis;x86_64"
+          sdkmanager --licenses
+
+      - name: Enable KVM
+        run: |
+          echo "Installing KVM"
+          sudo apt-get update
+          sudo apt-get --quiet install --yes qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+          sudo adduser $USER kvm
+          sudo chown $USER /dev/kvm
+          sudo chmod o+rw /dev/kvm
+          groups $USER
+
+      - name: Run Android Build and Tests
+        run: bash tests/test-android.sh
+        env:
+          ANDROID_EMULATOR_MEMORY: "4096" 
+          ANDROID_EMULATOR_CORES: "2"
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts
+          path: |
+            ~/.maestro/tests/
+            /home/runner/.maestro/tests/
+            /home/runner/.maestro/logs/
+        env:
+          GITHUB_STEP_SUMMARY: |
+            ## 📊 Test Artifacts Available
+            The test artifacts have been uploaded and can be downloaded from the workflow summary.
+            
+            ### 📁 Included artifacts:
+            - Maestro test results
+            - Test execution logs
+            - Screenshots and recordings

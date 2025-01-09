@@ -51,13 +51,13 @@ if ! adb devices | grep -q "emulator-"; then
         
         if [ -z "$AVD_NAME" ]; then
             log_subsection "No AVD found. Creating new AVD..."
-            echo "no" | avdmanager create avd -n "test_avd" \
-                --package "system-images;android-33;google_apis;x86_64" \
-                --device "pixel_2" \
+            echo "no" | avdmanager --verbose create avd -n "test_avd" \
+                --package "system-images;android-34;google_apis;x86_64" \
+                --device "pixel_6" \
                 --force
 
             CONFIG_PATH="$ANDROID_AVD_HOME/test_avd.avd/config.ini"
-            echo "hw.ramSize=4096" >> "$CONFIG_PATH"
+            echo "hw.ramSize=2048" >> "$CONFIG_PATH"
             echo "hw.gpu.enabled=yes" >> "$CONFIG_PATH"
             echo "hw.gpu.mode=swiftshader_indirect" >> "$CONFIG_PATH"
 
@@ -75,19 +75,36 @@ if ! adb devices | grep -q "emulator-"; then
 
             if [ -z "$AVD_NAME" ]; then
                 echo "❌ Failed to create AVD"
+                echo "Environment variables:"
+                echo "ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
+                echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
+                echo "ANDROID_HOME: $ANDROID_HOME"
+                echo "Contents of Android directories:"
+                ls -la $ANDROID_SDK_HOME || true
+                ls -la $ANDROID_HOME/emulator || true
                 exit 1
             fi
         fi
         
-        log_subsection "Starting emulator..."
+        log_subsection "Starting emulator with AVD: $AVD_NAME"
+        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
+            echo "❌ KVM permissions not properly set"
+            ls -la /dev/kvm
+            groups
+            exit 1
+        fi
+        
+        echo "✅ KVM permissions verified"
         $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
             -no-window \
             -no-audio \
             -no-boot-anim \
+            -accel on \
             -gpu swiftshader_indirect \
-            -memory 4096 \
-            -cores 2 \
-            -no-snapshot &
+            -memory 2048 \
+            -no-snapshot \
+            -screen no-touch \
+            -qemu -enable-kvm &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
     fi
@@ -97,35 +114,13 @@ if ! adb devices | grep -q "emulator-"; then
     log_subsection "Waiting for emulator to boot..."    
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 1; done'
     
-    # System stability configuration
-    log_subsection "Configuring system settings..."
     adb shell settings put global window_animation_scale 0
     adb shell settings put global transition_animation_scale 0
     adb shell settings put global animator_duration_scale 0
-    
-    # Memory optimization
-    adb shell settings put global cached_apps_freezer enabled
+    adb shell settings put system screen_off_timeout 1800000
     adb shell settings put global always_finish_activities 1
-
-    # SystemUI monitoring function
-    monitor_systemui() {
-        while true; do
-            if ! adb shell pidof com.android.systemui >/dev/null; then
-                echo "SystemUI process died, restarting..."
-                adb shell stop
-                sleep 2
-                adb shell start
-                sleep 5
-            fi
-            sleep 5
-        done
-    }
-
-    # Start SystemUI monitoring in background
-    monitor_systemui &
-    MONITOR_PID=$!
-
-    sleep 30
+    
+    sleep 60
 
     if ! adb shell input keyevent KEYCODE_WAKEUP; then
         echo "❌ System UI might be unresponsive, attempting recovery..."
@@ -158,13 +153,20 @@ cd ..
 
 log_section "Testing"
 log_subsection "Installing APK..."
+log_subsection "Checking APK location..."
+echo "Looking for APK in android/app/build/outputs/apk/debug/"
+ls -la android/app/build/outputs/apk/debug/
+
 APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
 
 if [ ! -f "$APK_PATH" ]; then
     echo "❌ Error: APK not found at $APK_PATH"
+    echo "Available files in build directory:"
+    find android/app/build/outputs/apk -type f -name "*.apk"
     exit 1
 fi
 
+echo "Installing APK from: $APK_PATH"
 adb install "$APK_PATH"
 
 log_subsection "Starting Expo server..."
@@ -181,6 +183,9 @@ for i in {1..60}; do
     sleep 2
 done
 
+log_subsection "Waiting for app to initialize..."
+sleep 60
+
 log_subsection "Running Maestro tests..."
 maestro test ./tests/*.yaml
 TEST_RESULT=$?
@@ -188,7 +193,6 @@ TEST_RESULT=$?
 log_section "Cleanup"
 log_subsection "Cleaning up processes..."
 kill $EXPO_PID 2>/dev/null || true
-kill $MONITOR_PID 2>/dev/null || true
 
 if [ ! -z "$EMULATOR_PID" ]; then
     log_subsection "Shutting down emulator..."
