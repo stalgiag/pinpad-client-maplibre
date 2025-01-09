@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Android build tools and platform
         run: |
-          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" 
+          sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393" "system-images;android-34;google_apis;x86_64"
           sdkmanager --licenses
 
       - name: Enable KVM
@@ -66,12 +66,3 @@ jobs:
             ~/.maestro/tests/
             /home/runner/.maestro/tests/
             /home/runner/.maestro/logs/
-        env:
-          GITHUB_STEP_SUMMARY: |
-            ## 📊 Test Artifacts Available
-            The test artifacts have been uploaded and can be downloaded from the workflow summary.
-            
-            ### 📁 Included artifacts:
-            - Maestro test results
-            - Test execution logs
-            - Screenshots and recordings
