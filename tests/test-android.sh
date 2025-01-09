@@ -13,13 +13,8 @@ log_subsection() {
     echo ">> $1"
 }
 
-if [ "$CI" = "true" ]; then
-    log_section "Running in CI environment"
-fi
-
 log_section "Setting up environment"
 log_subsection "Cleaning up Metro bundler..."
-# Check if lsof command exists
 if command -v lsof >/dev/null 2>&1; then
     METRO_PID=$(lsof -t -i:8081 || true)
     if [ ! -z "$METRO_PID" ]; then
@@ -37,70 +32,11 @@ log_section "Emulator Setup"
 log_subsection "Checking if emulator is running..."
 if ! adb devices | grep -q "emulator-"; then
     echo "No emulator running. Starting new emulator..."
-    
-    if [ "$CI" = "true" ]; then
-        log_subsection "Setting up AVD environment..."
-        export ANDROID_SDK_HOME=$HOME/.android
-        export ANDROID_AVD_HOME=$HOME/.android/avd
-        
-        mkdir -p $ANDROID_AVD_HOME
-        
-        log_subsection "Checking available AVDs..."
-        AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | head -n 1)
-        echo "AVD_NAME: $AVD_NAME"
-        
-        if [ -z "$AVD_NAME" ]; then
-            log_subsection "No AVD found. Creating new AVD..."
-            echo "no" | avdmanager --verbose create avd -n "test_avd" \
-                --package "system-images;android-34;google_apis;x86_64" \
-                --device "pixel_6" \
-                --force
-
-            # Verify AVD creation
-            for i in {1..5}; do
-                AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
-                if [ ! -z "$AVD_NAME" ]; then
-                    echo "✅ AVD created successfully"
-                    break
-                fi
-                echo "Waiting for AVD to be available... (attempt $i)"
-                echo "Current AVD directory contents:"
-                ls -la $ANDROID_AVD_HOME || true
-                sleep 5
-            done
-
-            if [ -z "$AVD_NAME" ]; then
-                echo "❌ Failed to create AVD"
-                echo "Environment variables:"
-                echo "ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
-                echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
-                echo "ANDROID_HOME: $ANDROID_HOME"
-                echo "Contents of Android directories:"
-                ls -la $ANDROID_SDK_HOME || true
-                ls -la $ANDROID_HOME/emulator || true
-                exit 1
-            fi
-        fi
-        
-        log_subsection "Starting emulator with AVD: $AVD_NAME"
-        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
-            echo "❌ KVM permissions not properly set"
-            ls -la /dev/kvm
-            groups
-            exit 1
-        fi
-        
-        echo "✅ KVM permissions verified"
-        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
-            -no-window \
-            -no-audio \
-            -no-boot-anim \
-            -accel on \
-            -gpu swiftshader_indirect \
-            -qemu -enable-kvm &
-    else
-        $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
-    fi
+    $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 \
+        -no-snapshot \
+        -gpu swiftshader_indirect \
+        -no-boot-anim \
+        -skin 1440x3120 &
     
     EMULATOR_PID=$!
     
@@ -131,10 +67,6 @@ cd ..
 
 log_section "Testing"
 log_subsection "Installing APK..."
-log_subsection "Checking APK location..."
-echo "Looking for APK in android/app/build/outputs/apk/debug/"
-ls -la android/app/build/outputs/apk/debug/
-
 APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
 
 if [ ! -f "$APK_PATH" ]; then
@@ -145,7 +77,7 @@ if [ ! -f "$APK_PATH" ]; then
 fi
 
 echo "Installing APK from: $APK_PATH"
-adb install "$APK_PATH"
+adb install -r "$APK_PATH"
 
 log_subsection "Starting Expo server..."
 yarn expo start &
