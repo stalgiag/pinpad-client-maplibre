@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Android build tools and platform
         run: |
-          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" "system-images;android-33;google_apis;x86_64"
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393" 
           sdkmanager --licenses
 
       - name: Enable KVM
@@ -56,9 +56,6 @@ jobs:
 
       - name: Run Android Build and Tests
         run: bash tests/test-android.sh
-        env:
-          ANDROID_EMULATOR_MEMORY: "4096" 
-          ANDROID_EMULATOR_CORES: "2"
 
       - name: Upload Maestro artifacts
         if: always()
