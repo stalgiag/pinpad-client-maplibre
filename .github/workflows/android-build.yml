@@ -56,11 +56,39 @@ jobs:
 
       - name: Generate test data
         run: yarn generate-test-data
+      
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build Android app
         run: |
           yarn expo prebuild --platform android --clean
           cd android && ./gradlew assembleDebug && cd ..
+          
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
 
       - name: Run E2E Tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -69,9 +97,19 @@ jobs:
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
           cores: 2
-          ram-size: 4096M
-          heap-size: 2048M
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          ram-size: 2048M
+          heap-size: 512M
+          disk-size: 2048M
+          force-avd-creation: false
+          profile: Nexus 6
+          emulator-options: >-
+            -no-window
+            -gpu swiftshader_indirect
+            -noaudio
+            -no-boot-anim
+            -camera-back none
+            -no-snapshot
+            -no-snapshot-save
           disable-animations: true
           script: |
             # Install the app
