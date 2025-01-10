@@ -39,21 +39,65 @@ if ! adb devices | grep -q "emulator-"; then
     echo "No emulator running. Starting new emulator..."
     
     if [ "$CI" = "true" ]; then
+        log_subsection "Setting up AVD environment..."
+        export ANDROID_SDK_HOME=$HOME/.android
+        export ANDROID_AVD_HOME=$HOME/.android/avd
+        
+        mkdir -p $ANDROID_AVD_HOME
+        
         log_subsection "Checking available AVDs..."
         AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | head -n 1)
         echo "AVD_NAME: $AVD_NAME"
         
         if [ -z "$AVD_NAME" ]; then
             log_subsection "No AVD found. Creating new AVD..."
-            echo "no" | avdmanager create avd -n "test_avd" \
-                --package "system-images;android-33;google_apis;x86_64" \
+            echo "no" | avdmanager --verbose create avd -n "test_avd" \
+                --package "system-images;android-34;google_apis;x86_64" \
                 --device "pixel_6" \
                 --force
-            AVD_NAME="test_avd"
+
+            # Verify AVD creation
+            for i in {1..5}; do
+                AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
+                if [ ! -z "$AVD_NAME" ]; then
+                    echo "✅ AVD created successfully"
+                    break
+                fi
+                echo "Waiting for AVD to be available... (attempt $i)"
+                echo "Current AVD directory contents:"
+                ls -la $ANDROID_AVD_HOME || true
+                sleep 5
+            done
+
+            if [ -z "$AVD_NAME" ]; then
+                echo "❌ Failed to create AVD"
+                echo "Environment variables:"
+                echo "ANDROID_AVD_HOME: $ANDROID_AVD_HOME"
+                echo "ANDROID_SDK_HOME: $ANDROID_SDK_HOME"
+                echo "ANDROID_HOME: $ANDROID_HOME"
+                echo "Contents of Android directories:"
+                ls -la $ANDROID_SDK_HOME || true
+                ls -la $ANDROID_HOME/emulator || true
+                exit 1
+            fi
         fi
         
         log_subsection "Starting emulator with AVD: $AVD_NAME"
-        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" -no-window -no-audio -no-boot-anim &
+        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
+            echo "❌ KVM permissions not properly set"
+            ls -la /dev/kvm
+            groups
+            exit 1
+        fi
+        
+        echo "✅ KVM permissions verified"
+        $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -accel on \
+            -gpu swiftshader_indirect \
+            -qemu -enable-kvm &
     else
         $ANDROID_HOME/emulator/emulator -avd Pixel_6_Pro_API_34 -no-snapshot -gpu swiftshader_indirect -no-boot-anim -skin 1440x3120 &
     fi
@@ -69,6 +113,9 @@ else
 fi
 
 log_section "Building Application"
+log_subsection "Generating test data..."
+yarn generate-test-data
+
 log_subsection "Running prebuild..."
 yarn expo prebuild --platform android --clean
 
@@ -76,9 +123,6 @@ log_subsection "Cleaning Android project..."
 cd android
 ./gradlew clean
 cd ..
-
-log_subsection "Generating test data..."
-yarn generate-test-data
 
 log_subsection "Building APK..."
 cd android
@@ -93,7 +137,6 @@ ls -la android/app/build/outputs/apk/debug/
 
 APK_PATH="android/app/build/outputs/apk/debug/app-debug.apk"
 
-# Check if APK exists
 if [ ! -f "$APK_PATH" ]; then
     echo "❌ Error: APK not found at $APK_PATH"
     echo "Available files in build directory:"
@@ -107,7 +150,19 @@ adb install "$APK_PATH"
 log_subsection "Starting Expo server..."
 yarn expo start &
 EXPO_PID=$!
-sleep 5
+
+log_subsection "Waiting for Expo server to be ready..."
+for i in {1..30}; do
+    if curl -s http://localhost:8081/status | grep -q "packager-status:running"; then
+        echo "✅ Expo server is ready"
+        break
+    fi
+    echo "Waiting for Expo server... (attempt $i)"
+    sleep 2
+done
+
+log_subsection "Waiting for app to initialize..."
+sleep 30
 
 log_subsection "Running Maestro tests..."
 maestro test ./tests/*.yaml
