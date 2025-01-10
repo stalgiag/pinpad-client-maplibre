@@ -99,13 +99,28 @@ jobs:
 
       - name: Run Maestro E2E tests
         run: |
-          sleep 10
           maestro hierarchy
-          maestro test .maestro/
+          
+          max_attempts=3
+          attempt=1
+          
+          until maestro test .maestro/ || [ $attempt -ge $max_attempts ]; do
+            echo "Attempt $attempt failed. Retrying..."
+            attempt=$((attempt + 1))
+            
+            echo "Current simulator state:"
+            maestro hierarchy
+            
+            sleep 5
+          done
+          
+          if [ $attempt -ge $max_attempts ]; then
+            echo "All $max_attempts attempts failed"
+            exit 1
+          fi
         env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 3000000 
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 200000 
           MAESTRO_THROTTLE_CPU: true
-          MAESTRO_TEST_RETRIES: 3 
 
       - name: Capture simulator screenshot on failure
         if: failure()
