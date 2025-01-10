@@ -1,0 +1,73 @@
+name: iOS E2E Tests
+
+on:
+  push:
+
+jobs:
+  build:
+    timeout-minutes: 30
+    runs-on: macos-14
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - device: "iPhone 15"
+            ios: "17.0"
+          - device: "iPad Pro (12.9-inch) (6th generation)"
+            ios: "17.2"
+          - device: "iPad Air 11-inch (M2)"
+            ios: "17.4"
+          - device: "iPhone 16 Pro"
+            ios: "18.1"
+          - device: "iPad Pro 11-inch (M4)"
+            ios: "18.1"
+    env:
+      XC_SIMULATOR_NAME: ${{ matrix.device }}
+      XC_VERSION: ${{ matrix.ios }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Run iOS Simulator
+        run: |
+          echo "Creating and booting simulator"
+          xcrun simctl create "${{ matrix.device }}" "com.apple.CoreSimulator.SimDeviceType.${{ matrix.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-${{ matrix.ios }}" || true
+          xcrun simctl boot "${{ matrix.device }}"
+
+      - run: npx envinfo
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Build iOS App
+        run: |
+          yarn generate-test-data
+          yarn expo prebuild --platform ios
+          cd ios
+          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -sdk iphonesimulator -arch x86_64 -configuration Debug -derivedDataPath build
+
+      - name: Install .app
+        run: xcrun simctl install booted ./pinpadclientmaplibre.app
+
+      - name: Run Maestro E2E tests
+        run: maestro test .maestro/
+
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts-${{ matrix.device }}-ios${{ matrix.ios }}
+          path: |
+            ~/.maestro/tests/
+            /home/runner/.maestro/tests/
+            /home/runner/.maestro/logs/

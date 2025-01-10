@@ -10,16 +10,21 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 5
       matrix:
-        api-level: [28, 31, 33]
-        arch: [x86_64]
-        target: [default, google_apis]
         include:
+          - api-level: 28
+            target: default
+            arch: x86_64
           - api-level: 26
             target: google_apis
             arch: x86
           - api-level: 28
+            target: default
+            arch: x86_64
+          - api-level: 31
+            target: default
+            arch: x86_64
+          - api-level: 33
             target: default
             arch: x86_64
 
