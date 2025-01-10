@@ -15,15 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - device: "iPhone 15"
+          - device: "iPhone-15"
             ios: "17.0"
-          - device: "iPad Pro (12.9-inch) (6th generation)"
+          - device: "iPad-Pro-12-9-inch-6th-generation"
             ios: "17.2"
-          - device: "iPad Air 11-inch (M2)"
+          - device: "iPhone-SE-3rd-generation"
             ios: "17.4"
-          - device: "iPhone 16 Pro"
+          - device: "iPhone-16-Pro"
             ios: "18.1"
-          - device: "iPad Pro 11-inch (M4)"
+          - device: "iPad-Pro-11-inch-4th-generation"
             ios: "18.1"
     env:
       XC_SIMULATOR_NAME: ${{ matrix.device }}
@@ -36,6 +36,11 @@ jobs:
 
       - name: Log runner info
         run: npx envinfo
+
+      - name: List available simulators
+        run: |
+          xcrun simctl list runtimes
+          xcrun simctl list devicetypes
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -57,10 +62,9 @@ jobs:
       - name: Run iOS Simulator
         run: |
           echo "Creating and booting simulator"
-          DEVICE_ID=$(xcrun simctl create "$XC_SIMULATOR_NAME" \
-            "$(xcrun simctl list devicetypes | grep "$XC_SIMULATOR_NAME" | cut -d ' ' -f 2)" \
-            "iOS-$XC_VERSION")
-          xcrun simctl boot "$DEVICE_ID"
+          xcrun simctl list devices available
+          xcrun simctl create "$XC_SIMULATOR_NAME" "iPhone 15" "iOS$XC_VERSION-$(uname -m)"
+          xcrun simctl boot "$XC_SIMULATOR_NAME"
 
       - name: Install Maestro
         run: |
