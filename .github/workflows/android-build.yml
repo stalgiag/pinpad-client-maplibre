@@ -68,9 +68,9 @@ jobs:
       - name: Run Android Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${matrix.api-level}
-          target: ${matrix.target}
-          arch: ${matrix.arch}
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
           cores: 2
           ram-size: 2048M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
