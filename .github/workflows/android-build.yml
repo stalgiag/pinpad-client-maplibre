@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     timeout-minutes: 35
     
     strategy:
@@ -13,7 +13,7 @@ jobs:
       max-parallel: 2
       matrix:
         api-level: [28]
-        target: [google_apis]
+        target: [default]
         arch: [x86_64]
 
     steps:
@@ -93,11 +93,11 @@ jobs:
       - name: Run E2E Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 24        # Using an older API level (Android 7.0) for smaller footprint
-          target: default      # Using default instead of google_apis
-          arch: x86           # Using x86 instead of x86_64
-          cores: 1            # Minimum cores
-          ram-size: 1024M     # Minimum RAM
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          cores: 2
+          ram-size: 4096M  
           emulator-options: >-
             -no-window
             -gpu swiftshader_indirect
@@ -106,12 +106,8 @@ jobs:
             -camera-back none
             -no-snapshot
             -no-snapshot-save
-            -memory 1024
           disable-animations: true
           script: |
-            # Wait for emulator with timeout
-            timeout 300 adb wait-for-device
-            
             # Install the app
             adb install -r android/app/build/outputs/apk/debug/app-debug.apk
             
