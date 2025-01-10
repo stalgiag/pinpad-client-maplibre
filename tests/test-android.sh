@@ -82,15 +82,6 @@ if ! adb devices | grep -q "emulator-"; then
             fi
         fi
         
-        log_subsection "Starting emulator with AVD: $AVD_NAME"
-        if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
-            echo "❌ KVM permissions not properly set"
-            ls -la /dev/kvm
-            groups
-            exit 1
-        fi
-        
-        echo "✅ KVM permissions verified"
         $ANDROID_HOME/emulator/emulator -avd "$AVD_NAME" \
             -no-window \
             -no-audio \
