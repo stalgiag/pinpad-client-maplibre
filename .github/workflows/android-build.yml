@@ -10,15 +10,18 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 5
       matrix:
-        api-level: [ 27, 28]
-        arch: [x86, x86_64]
-        target: [default]
+        api-level: [31, 33]
+        arch: [x86_64]
+        target: [default, google_apis]
         include:
           - api-level: 26
             target: google_apis
             arch: x86
+          - api-level: 28
+            target: default
+            arch: x86_64
 
     steps:
       - name: Checkout repository
@@ -59,9 +62,9 @@ jobs:
       - name: Run Android Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
+          api-level: ${matrix.api-level}
+          target: ${matrix.target}
+          arch: ${matrix.arch}
           cores: 2
           ram-size: 2048M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
