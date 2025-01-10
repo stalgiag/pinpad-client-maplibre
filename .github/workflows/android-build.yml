@@ -6,16 +6,6 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 35
-    
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        api-level: [28]
-        target: [default]
-        arch: [x86_64]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,6 +25,10 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Android build tools and platform
+        run: |
+          sdkmanager --install "build-tools;33.0.0" "platforms;android-33" "ndk;25.1.8937393"   
+
       - name: Install dependencies
         run: |
           npm install -g yarn
@@ -45,88 +39,13 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Install Android SDK components
+      - name: Install Android build tools and platform
         run: |
-          sdkmanager --install "build-tools;33.0.0" \
-            "platforms;android-33" \
-            "system-images;android-${{ matrix.api-level }};${{ matrix.target }};${{ matrix.arch }}" \
-            "platform-tools" \
-            "ndk;25.1.8937393"
+          sdkmanager --install "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393" "system-images;android-34;google_apis;x86_64"
           sdkmanager --licenses
 
-      - name: Generate test data
-        run: yarn generate-test-data
-
-      - name: Gradle cache
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build Android app
-        run: |
-          yarn expo prebuild --platform android --clean
-          cd android && ./gradlew assembleDebug && cd ..
-          
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
-
-      - name: Run E2E Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          arch: ${{ matrix.arch }}
-          cores: 2
-          ram-size: 4096M  
-          emulator-options: >-
-            -no-window
-            -gpu swiftshader_indirect
-            -noaudio
-            -no-boot-anim
-            -camera-back none
-            -no-snapshot
-            -no-snapshot-save
-          disable-animations: true
-          script: |
-            # Install the app
-            adb install -r android/app/build/outputs/apk/debug/app-debug.apk
-            
-            # Start Expo server
-            yarn expo start &
-            EXPO_PID=$!
-            
-            # Wait for Expo server
-            for i in {1..30}; do
-              if curl -s http://localhost:8081/status | grep -q "packager-status:running"; then
-                echo "✅ Expo server is ready"
-                break
-              fi
-              echo "Waiting for Expo server... (attempt $i)"
-              sleep 2
-            done
-            
-            # Run Maestro tests
-            maestro test ./tests/*.yaml
-            TEST_RESULT=$?
-            
-            # Cleanup
-            kill $EXPO_PID 2>/dev/null || true
-            
-            exit $TEST_RESULT
+      - name: Run Android Build and Tests
+        run: bash tests/test-android.sh
 
       - name: Upload Maestro artifacts
         if: always()
