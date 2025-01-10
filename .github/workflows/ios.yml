@@ -33,6 +33,23 @@ jobs:
       - name: Log runner info
         run: npx envinfo
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'yarn'
+      
+      - name: Install dependencies
+        run: |
+          npm install -g yarn
+          yarn install
+
       - name: Run iOS Simulator
         run: |
           echo "Creating and booting simulator"
@@ -40,12 +57,6 @@ jobs:
             "$(xcrun simctl list devicetypes | grep "$XC_SIMULATOR_NAME" | cut -d ' ' -f 2)" \
             "iOS-$XC_VERSION")
           xcrun simctl boot "$DEVICE_ID"
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: 11
 
       - name: Install Maestro
         run: |
