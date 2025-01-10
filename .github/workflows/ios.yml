@@ -79,13 +79,32 @@ jobs:
           yarn expo prebuild --platform ios
           cd ios
           pod install
-          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -sdk iphonesimulator -arch arm64 -configuration Debug -derivedDataPath build
+          xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
+            -scheme pinpadclientmaplibre \
+            -sdk iphonesimulator \
+            -arch arm64 \
+            -configuration Debug \
+            -derivedDataPath build \
+            -quiet \
+            COMPILER_INDEX_STORE_ENABLE=NO
 
       - name: Install .app
         run: xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app
 
       - name: Run Maestro E2E tests
-        run: maestro test .maestro/
+        run: |
+          sleep 10
+          maestro hierarchy
+          maestro test .maestro/
+        env:
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 180000 
+          MAESTRO_THROTTLE_CPU: true
+          MAESTRO_TEST_RETRIES: 2 
+
+      - name: Capture simulator screenshot on failure
+        if: failure()
+        run: |
+          xcrun simctl io booted screenshot "failed-test-screenshot.png"
 
       - name: Upload Maestro artifacts
         if: always()
@@ -93,8 +112,7 @@ jobs:
         with:
           name: maestro-artifacts-${{ matrix.device }}-ios${{ matrix.runtime }}
           path: |
-            ./maestro/logs/**
-            ./maestro/tests/**
-            ./maestro/screenshots/**
-            ./.maestro/screenshots/**
-            ./.maestro/test-results/**
+            ~/Library/Logs/maestro/
+            ~/.maestro/tests/
+            ~/.maestro/screenshots/
+            failed-test-screenshot.png
