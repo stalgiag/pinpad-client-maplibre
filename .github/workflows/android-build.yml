@@ -51,6 +51,7 @@ jobs:
 
       - name: Build Android App
         run: |
+          yarn generate-test-data
           yarn expo prebuild --platform android
           cd android
           ./gradlew assembleRelease
