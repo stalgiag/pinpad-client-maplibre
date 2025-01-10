@@ -88,6 +88,12 @@ jobs:
             -quiet \
             COMPILER_INDEX_STORE_ENABLE=NO
 
+      - name: Start Metro Bundler
+        run: |
+          yarn start &
+          echo "Waiting for Metro bundler to start..."
+          sleep 30
+
       - name: Install .app
         run: xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app
 
