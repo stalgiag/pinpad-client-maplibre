@@ -165,7 +165,7 @@ log_subsection "Waiting for app to initialize..."
 sleep 30
 
 log_subsection "Running Maestro tests..."
-maestro test ./tests/*.yaml
+maestro test .maestro/
 TEST_RESULT=$?
 
 log_section "Cleanup"

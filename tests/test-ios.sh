@@ -44,7 +44,7 @@ cd ..
 yarn expo start &
 EXPO_PID=$!
 sleep 5
-maestro test ./tests/*.yaml
+maestro test .maestro/
 TEST_RESULT=$?
 
 echo "Cleaning up processes..."
