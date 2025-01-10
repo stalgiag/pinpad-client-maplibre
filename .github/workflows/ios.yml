@@ -30,13 +30,16 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Log runner info
+        run: npx envinfo
+
       - name: Run iOS Simulator
         run: |
           echo "Creating and booting simulator"
-          xcrun simctl create "${{ matrix.device }}" "com.apple.CoreSimulator.SimDeviceType.${{ matrix.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-${{ matrix.ios }}" || true
-          xcrun simctl boot "${{ matrix.device }}"
-
-      - run: npx envinfo
+          DEVICE_ID=$(xcrun simctl create "$XC_SIMULATOR_NAME" \
+            "$(xcrun simctl list devicetypes | grep "$XC_SIMULATOR_NAME" | cut -d ' ' -f 2)" \
+            "iOS-$XC_VERSION")
+          xcrun simctl boot "$DEVICE_ID"
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -57,7 +60,7 @@ jobs:
           xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -sdk iphonesimulator -arch x86_64 -configuration Debug -derivedDataPath build
 
       - name: Install .app
-        run: xcrun simctl install booted ./pinpadclientmaplibre.app
+        run: xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app
 
       - name: Run Maestro E2E tests
         run: maestro test .maestro/
