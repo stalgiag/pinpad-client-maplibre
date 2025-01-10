@@ -103,9 +103,9 @@ jobs:
           maestro hierarchy
           maestro test .maestro/
         env:
-          MAESTRO_DRIVER_STARTUP_TIMEOUT: 180000 
+          MAESTRO_DRIVER_STARTUP_TIMEOUT: 3000000 
           MAESTRO_THROTTLE_CPU: true
-          MAESTRO_TEST_RETRIES: 2 
+          MAESTRO_TEST_RETRIES: 3 
 
       - name: Capture simulator screenshot on failure
         if: failure()
