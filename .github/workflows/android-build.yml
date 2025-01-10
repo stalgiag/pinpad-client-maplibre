@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    timeout-minutes: 90
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     strategy:
@@ -84,7 +84,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: maestro-artifacts
+          name: maestro-artifacts-api${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
           path: |
             ~/.maestro/tests/
             /home/runner/.maestro/tests/
