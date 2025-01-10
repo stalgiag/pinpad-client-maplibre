@@ -93,5 +93,8 @@ jobs:
         with:
           name: maestro-artifacts-${{ matrix.device }}-ios${{ matrix.runtime }}
           path: |
-            ~/Library/Logs/maestro/
-            ~/.maestro/tests/
+            ./maestro/logs/**
+            ./maestro/tests/**
+            ./maestro/screenshots/**
+            ./.maestro/screenshots/**
+            ./.maestro/test-results/**

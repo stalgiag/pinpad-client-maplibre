@@ -3,15 +3,21 @@
 set -e 
 
 # Use environment variable for device name with fallback
-DEVICE_NAME=${SIMULATOR_DEVICE:-"iPhone XR"}
+DEVICE_NAME=${SIMULATOR_DEVICE:-"iPhone Xʀ"}
 
 # Kill any running Metro bundler instances
 echo "Cleaning up Metro bundler..."
-METRO_PID=$(lsof -t -i:8081)
-if [ ! -z "$METRO_PID" ]; then
-    echo "Found Metro process(es): $METRO_PID"
-    kill $METRO_PID 2>/dev/null || true
-    sleep 2
+if command -v lsof >/dev/null 2>&1; then
+    METRO_PID=$(lsof -t -i:8081 || true)
+    if [ ! -z "$METRO_PID" ]; then
+        echo "Found Metro process(es): $METRO_PID"
+        kill $METRO_PID 2>/dev/null || true
+        sleep 2
+    else
+        echo "No Metro process found on port 8081"
+    fi
+else
+    echo "lsof command not found, skipping Metro cleanup"
 fi
 
 if ! xcrun simctl list | grep -q "Booted"; then
@@ -34,7 +40,7 @@ xcodebuild -workspace pinpadclientmaplibre.xcworkspace \
   -scheme pinpadclientmaplibre \
   -configuration Debug \
   -sdk iphonesimulator \
-  -destination "platform=iOS Simulator,name=$DEVICE_NAME" \
+  -destination "platform=iOS Simulator,id=$(xcrun simctl list devices | grep Booted | sed -E 's/.*\(([A-Z0-9-]+)\).*/\1/')" \
   -derivedDataPath build \
   build
 
