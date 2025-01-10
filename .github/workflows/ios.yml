@@ -79,7 +79,7 @@ jobs:
           yarn expo prebuild --platform ios
           cd ios
           pod install
-          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -sdk iphonesimulator -arch x86_64 -configuration Debug -derivedDataPath build
+          xcodebuild -workspace pinpadclientmaplibre.xcworkspace -scheme pinpadclientmaplibre -sdk iphonesimulator -arch arm64 -configuration Debug -derivedDataPath build
 
       - name: Install .app
         run: xcrun simctl install booted ios/build/Build/Products/Debug-iphonesimulator/pinpadclientmaplibre.app
@@ -91,8 +91,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: maestro-artifacts-${{ matrix.device }}-ios${{ matrix.ios }}
+          name: maestro-artifacts-${{ matrix.device }}-ios${{ matrix.runtime }}
           path: |
+            ~/Library/Logs/maestro/
             ~/.maestro/tests/
-            /home/runner/.maestro/tests/
-            /home/runner/.maestro/logs/
