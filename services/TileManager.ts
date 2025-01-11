@@ -35,11 +35,11 @@ export class TileManager {
         // This code adds the tiles to the sources definition
         // This approach suggests that we are going to limit the view
         // to the tiles that we have at the point of interaction
-        // This may prove to be annoying for us and we may need to
-        // to somehow to otherwise intercept the request event
-        // fine for now
+        // This may prove to be annoying for us and we may need
+        // to somehow intercept the request event
+        // but this is fine for now
         // TODO: determine whether this is acceptable once we start
-        // using non-streaming solutions
+        // using non-streaming approach
         style.sources = {
           "custom-tiles": {
             "type": "vector",

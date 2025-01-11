@@ -1,17 +1,8 @@
 #!/bin/bash
 set -e
 
-log_section() {
-    echo ""
-    echo "============================================"
-    echo "🚀 $1"
-    echo "============================================"
-}
-
-log_subsection() {
-    echo ""
-    echo ">> $1"
-}
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 if [ "$CI" = "true" ]; then
     log_section "Running in CI environment"
@@ -19,7 +10,7 @@ fi
 
 log_section "Setting up environment"
 log_subsection "Cleaning up Metro bundler..."
-# Check if lsof command exists
+
 if command -v lsof >/dev/null 2>&1; then
     METRO_PID=$(lsof -t -i:8081 || true)
     if [ ! -z "$METRO_PID" ]; then
@@ -56,7 +47,6 @@ if ! adb devices | grep -q "emulator-"; then
                 --device "pixel_6" \
                 --force
 
-            # Verify AVD creation
             for i in {1..5}; do
                 AVD_NAME=$($ANDROID_HOME/emulator/emulator -list-avds | grep "test_avd" || true)
                 if [ ! -z "$AVD_NAME" ]; then

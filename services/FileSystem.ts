@@ -2,6 +2,8 @@ import * as RNFS from '@dr.pogodin/react-native-fs';
 import { unzip } from 'react-native-zip-archive';
 import { Platform } from 'react-native';
 
+// Note: This is a temporary sketch and these aren't being used currently
+// TODO: Replace
 export class FileSystemService {
   // TODO: Generalize these methods
   async extractTileBundle(bundleName: string, extractionPath: string): Promise<string> {
